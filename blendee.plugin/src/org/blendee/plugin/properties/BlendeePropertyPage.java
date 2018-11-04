@@ -8,7 +8,7 @@ import java.io.UncheckedIOException;
 import java.sql.Driver;
 import java.util.Properties;
 
-import org.blendee.develop.CodeFormatter;
+import org.blendee.codegen.CodeFormatter;
 import org.blendee.internal.U;
 import org.blendee.jdbc.MetadataFactory;
 import org.blendee.jdbc.TransactionFactory;

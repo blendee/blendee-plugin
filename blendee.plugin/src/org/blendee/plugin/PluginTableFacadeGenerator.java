@@ -3,8 +3,8 @@ package org.blendee.plugin;
 import java.io.File;
 import java.io.IOException;
 
-import org.blendee.develop.CodeFormatter;
-import org.blendee.develop.TableFacadeGenerator;
+import org.blendee.codegen.CodeFormatter;
+import org.blendee.codegen.TableFacadeGenerator;
 import org.blendee.jdbc.Metadata;
 
 public class PluginTableFacadeGenerator extends TableFacadeGenerator {

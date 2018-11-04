@@ -3,7 +3,7 @@ package org.blendee.plugin.views.element;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.blendee.develop.TableFacadeGenerator;
+import org.blendee.codegen.TableFacadeGenerator;
 import org.blendee.jdbc.BlendeeManager;
 import org.blendee.jdbc.ContextManager;
 import org.blendee.jdbc.TablePath;

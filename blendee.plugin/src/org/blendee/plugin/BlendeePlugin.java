@@ -17,7 +17,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.blendee.develop.CodeFormatter;
+import org.blendee.codegen.CodeFormatter;
 import org.blendee.internal.HomeStorage;
 import org.blendee.internal.U;
 import org.blendee.jdbc.MetadataFactory;
