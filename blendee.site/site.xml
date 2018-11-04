@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description name="Blendee Update Site">
+      Blendee Update Site
+   </description>
+   <feature url="features/blendee.devtools_0.1.0.qualifier.jar" id="blendee.devtools" version="0.1.0.qualifier">
+      <category name="devtools"/>
+   </feature>
+   <category-def name="devtools" label="Development Tools">
+      <description>
+         includes Query Editor and ORM Generator
+      </description>
+   </category-def>
+</site>

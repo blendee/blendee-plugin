@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="blendee.plugin" default="import">
+
+	<property name="blendee.src" value="../../blendee.core/src" />
+	<property name="blendee.devsrc" value="../../blendee.develop/src" />
+
+	<path id="develop.classpath">
+		<pathelement location="build" />
+	</path>
+
+	<!--
+	blendee.plugin 用にblendee.jar を生成します。
+	-->
+	<target name="import">
+		<delete dir="build" />
+		<antcall target="compile-for-plugin" />
+		<copy todir="build">
+			<fileset dir="${blendee.src}" includes="**/*.java" />
+			<fileset dir="${blendee.devsrc}" includes="**/*.java" />
+		</copy>
+		<jar basedir="build" jarfile="../blendee.jar" />
+	</target>
+
+	<!--
+	javac を実行します。
+	-->
+	<target name="compile-for-plugin">
+		<mkdir dir="build" />
+		<javac srcdir="${blendee.src}" destdir="build" debug="true" optimize="true" deprecation="true" encoding="UTF-8" includeantruntime="false">
+			<include name="**/*.java" />
+			<exclude name="**/package-info.java" />
+			<compilerarg value="-Xlint:unchecked" />
+		</javac>
+		<javac srcdir="${blendee.devsrc}" destdir="build" debug="true" optimize="true" deprecation="true" encoding="UTF-8" includeantruntime="false">
+			<include name="**/*.java" />
+			<exclude name="**/package-info.java" />
+			<compilerarg value="-Xlint:unchecked" />
+		</javac>
+	</target>
+</project>
