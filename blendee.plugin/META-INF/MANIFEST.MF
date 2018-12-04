@@ -4,7 +4,7 @@ Bundle-Name: Blendee Plugin
 Bundle-SymbolicName: org.blendee.plugin;singleton:=true
 Bundle-Version: 0.7.0
 Bundle-ClassPath: blendee.jar,
- blendee.plugin.jar
+ blendee-plugin.jar
 Bundle-Activator: org.blendee.plugin.BlendeePlugin
 Bundle-Vendor: blendee.org
 Export-Package: .,
@@ -22,3 +22,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.text
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: org.blendee.plugin

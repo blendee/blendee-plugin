@@ -134,11 +134,14 @@ public class TableElement extends PropertySourceElement {
 
 		IPackageFragment schemaPackage = getPackage(fragmentRoot, packageName + "." + TableFacadePackageRule.care(parent.getName()));
 
+		CodeFormatter formatter = ToolFactory.createCodeFormatter(
+			BlendeePlugin.getDefault().getProject().getOptions(true));
+
 		while (tables.size() > 0) {
 			TablePath targetPath = tables.pop();
 			Relationship target = factory.getInstance(targetPath);
 
-			build(generator, schemaPackage, target);
+			build(generator, schemaPackage, target, formatter);
 
 			collect(tables, target);
 
@@ -199,13 +202,11 @@ public class TableElement extends PropertySourceElement {
 	private void build(
 		TableFacadeGenerator generator,
 		IPackageFragment packageFragment,
-		Relationship relation) {
+		Relationship relation,
+		CodeFormatter formatter) {
 		TablePath path = relation.getTablePath();
 		String tableName = path.getTableName();
 		try {
-			CodeFormatter formatter = ToolFactory.createCodeFormatter(
-				BlendeePlugin.getDefault().getProject().getOptions(true));
-
 			createSource(
 				TableFacadeGenerator.createCompilationUnitName(tableName),
 				packageFragment,
