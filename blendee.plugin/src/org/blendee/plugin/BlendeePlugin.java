@@ -26,7 +26,7 @@ import org.blendee.jdbc.TransactionFactory;
 import org.blendee.plugin.views.ClassBuilderView;
 import org.blendee.plugin.views.QueryEditorView;
 import org.blendee.selector.ColumnRepositoryFactory;
-import org.blendee.support.Query;
+import org.blendee.assist.Query;
 import org.blendee.util.BlendeeConstants;
 import org.blendee.util.FileColumnRepositoryFactory;
 import org.eclipse.core.resources.IProject;

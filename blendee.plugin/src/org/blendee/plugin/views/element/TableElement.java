@@ -12,7 +12,7 @@ import org.blendee.plugin.Constants;
 import org.blendee.plugin.PluginTableFacadeGenerator;
 import org.blendee.sql.Relationship;
 import org.blendee.sql.RelationshipFactory;
-import org.blendee.support.TableFacadePackageRule;
+import org.blendee.assist.TableFacadePackageRule;
 import org.blendee.util.Blendee;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;

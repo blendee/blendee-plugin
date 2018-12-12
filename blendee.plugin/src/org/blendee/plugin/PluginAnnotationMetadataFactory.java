@@ -3,7 +3,7 @@ package org.blendee.plugin;
 import org.blendee.jdbc.Metadata;
 import org.blendee.jdbc.Metadatas;
 import org.blendee.jdbc.impl.JDBCMetadata;
-import org.blendee.support.TableFacade;
+import org.blendee.assist.TableFacade;
 import org.blendee.util.AnnotationMetadataFactory;
 
 public class PluginAnnotationMetadataFactory extends AnnotationMetadataFactory {
