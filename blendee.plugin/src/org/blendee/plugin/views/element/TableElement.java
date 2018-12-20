@@ -132,14 +132,14 @@ public class TableElement extends PropertySourceElement {
 		//自身をセット
 		tables.add(relation.getTablePath());
 
-		IPackageFragment schemaPackage = getPackage(fragmentRoot, packageName + "." + TableFacadePackageRule.care(parent.getName()));
-
 		CodeFormatter formatter = ToolFactory.createCodeFormatter(
 			BlendeePlugin.getDefault().getProject().getOptions(true));
 
 		while (tables.size() > 0) {
 			TablePath targetPath = tables.pop();
 			Relationship target = factory.getInstance(targetPath);
+
+			IPackageFragment schemaPackage = getPackage(fragmentRoot, packageName + "." + TableFacadePackageRule.care(targetPath.getSchemaName()));
 
 			build(generator, schemaPackage, target, formatter);
 
@@ -189,7 +189,7 @@ public class TableElement extends PropertySourceElement {
 			".",
 			new String[] {
 				BlendeePlugin.getDefault().getOutputPackage(),
-				TableFacadePackageRule.care(parent.getName()),
+				TableFacadePackageRule.care(path.getSchemaName()),
 				path.getTableName() });
 		try {
 			if (BlendeePlugin.getDefault().getProject().findType(typeName) != null) return true;
