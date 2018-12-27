@@ -1,9 +1,9 @@
 package org.blendee.plugin;
 
+import org.blendee.assist.TableFacade;
 import org.blendee.jdbc.Metadata;
 import org.blendee.jdbc.Metadatas;
 import org.blendee.jdbc.impl.JDBCMetadata;
-import org.blendee.assist.TableFacade;
 import org.blendee.util.AnnotationMetadataFactory;
 
 public class PluginAnnotationMetadataFactory extends AnnotationMetadataFactory {
@@ -34,6 +34,14 @@ public class PluginAnnotationMetadataFactory extends AnnotationMetadataFactory {
 	@Override
 	protected Metadata getDepends() {
 		return new JDBCMetadata();
+	}
+
+	/**
+	 * DB からカラムの最新状態を取り込みなおす
+	 */
+	@Override
+	protected boolean usesAllVirtualColumns() {
+		return false;
 	}
 
 	private static boolean hasTarget(Class<?>[] interfaces) {
