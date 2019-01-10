@@ -149,21 +149,17 @@ public class AnchorElement extends PropertySourceElement implements Comparable<A
 	@Override
 	public Element[] getChildren() {
 		Element[][] result = { null };
-		try {
-			Blendee.execute(t -> {
-				if (useColumnMode) {
-					result[0] = UseColumnElement.getElements(
-						this,
-						repository.getColumns(id));
+		Blendee.execute(t -> {
+			if (useColumnMode) {
+				result[0] = UseColumnElement.getElements(
+					this,
+					repository.getColumns(id));
 
-					return;
-				}
+				return;
+			}
 
-				if (!repository.getTablePath(id).exists()) result[0] = new Element[0];
-			});
-		} catch (Throwable t) {
-			throw new IllegalStateException(t);
-		}
+			if (!repository.getTablePath(id).exists()) result[0] = new Element[0];
+		});
 
 		if (result[0] != null) return result[0];
 
@@ -199,25 +195,21 @@ public class AnchorElement extends PropertySourceElement implements Comparable<A
 		changeModeAction.setText(changeModeActionText);
 		changeModeAction.setToolTipText(changeModeActionText);
 
-		try {
-			Blendee.execute(t -> {
-				if (repository.getColumns(id).length > 0) {
-					viewSQLAction.element = this;
-					viewSQLAction.setEnabled(true);
-					changeModeAction.element = this;
+		Blendee.execute(t -> {
+			if (repository.getColumns(id).length > 0) {
+				viewSQLAction.element = this;
+				viewSQLAction.setEnabled(true);
+				changeModeAction.element = this;
+				changeModeAction.setEnabled(true);
+			} else {
+				viewSQLAction.setEnabled(false);
+				if (useColumnMode) {
 					changeModeAction.setEnabled(true);
 				} else {
-					viewSQLAction.setEnabled(false);
-					if (useColumnMode) {
-						changeModeAction.setEnabled(true);
-					} else {
-						changeModeAction.setEnabled(false);
-					}
+					changeModeAction.setEnabled(false);
 				}
-			});
-		} catch (Throwable t) {
-			throw new IllegalStateException(t);
-		}
+			}
+		});
 
 		manager.add(viewSQLAction);
 		manager.add(changeModeAction);
@@ -350,8 +342,9 @@ public class AnchorElement extends PropertySourceElement implements Comparable<A
 	@Override
 	Object getMyPropertyValue(Object id) {
 		if (timestampId.equals(id))
-			return DateFormat.getDateTimeInstance().format(
-				new Date(repository.getMarkClearedTimestamp(this.id)));
+			return DateFormat.getDateTimeInstance()
+				.format(
+					new Date(repository.getMarkClearedTimestamp(this.id)));
 
 		if (errorId.equals(id)) return (isValidAnchor()) ? "なし" : "あり";
 
@@ -368,13 +361,9 @@ public class AnchorElement extends PropertySourceElement implements Comparable<A
 
 	private boolean isValidAnchor() {
 		boolean[] result = { false };
-		try {
-			Blendee.execute(t -> {
-				result[0] = repository.getErrorMessages(id).length == 0;
-			});
-		} catch (Throwable t) {
-			throw new IllegalStateException(t);
-		}
+		Blendee.execute(t -> {
+			result[0] = repository.getErrorMessages(id).length == 0;
+		});
 
 		return result[0];
 	}
@@ -407,8 +396,9 @@ public class AnchorElement extends PropertySourceElement implements Comparable<A
 		relationship = new RelationshipElement(
 			repository,
 			id,
-			ContextManager.get(RelationshipFactory.class).getInstance(
-				repository.getTablePath(id)));
+			ContextManager.get(RelationshipFactory.class)
+				.getInstance(
+					repository.getTablePath(id)));
 		relationship.setParent(this);
 		relationship.setParentForPath(this);
 	}
@@ -574,25 +564,21 @@ public class AnchorElement extends PropertySourceElement implements Comparable<A
 		public void run() {
 			TablePath path = element.repository.getTablePath(element.id);
 
-			try {
-				Blendee.execute(t -> {
-					Column[] columns = element.repository.getColumns(element.id);
+			Blendee.execute(t -> {
+				Column[] columns = element.repository.getColumns(element.id);
 
-					RuntimeId id = RuntimeIdFactory.getRuntimeInstance();
+				RuntimeId id = RuntimeIdFactory.getRuntimeInstance();
 
-					SQLQueryBuilder builder = new SQLQueryBuilder(new FromClause(path, id));
-					SelectClause selectClause = new SelectClause(id);
-					for (int i = 0; i < columns.length; i++) {
-						selectClause.add(columns[i]);
-					}
+				SQLQueryBuilder builder = new SQLQueryBuilder(new FromClause(path, id));
+				SelectClause selectClause = new SelectClause(id);
+				for (int i = 0; i < columns.length; i++) {
+					selectClause.add(columns[i]);
+				}
 
-					builder.setSelectClause(selectClause);
+				builder.setSelectClause(selectClause);
 
-					new TextDialog("生成されたSQL", builder.toString()).open();
-				});
-			} catch (Throwable t) {
-				throw new IllegalStateException(t);
-			}
+				new TextDialog("生成されたSQL", builder.toString()).open();
+			});
 		}
 	}
 

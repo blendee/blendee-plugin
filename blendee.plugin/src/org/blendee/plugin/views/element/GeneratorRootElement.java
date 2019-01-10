@@ -3,6 +3,7 @@ package org.blendee.plugin.views.element;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.blendee.jdbc.BlendeeException;
 import org.blendee.plugin.BlendeePlugin;
 import org.blendee.plugin.Constants;
 import org.blendee.util.Blendee;
@@ -22,10 +23,10 @@ public class GeneratorRootElement implements Element {
 					list.add(new SchemaElement(schema));
 				}
 			});
-		} catch (Throwable t) {
-			t = BlendeePlugin.strip(t);
-			t.printStackTrace();
-			MessageDialog.openError(null, Constants.TITLE, t.getMessage());
+		} catch (BlendeeException e) {
+			e = BlendeePlugin.strip(e);
+			e.printStackTrace();
+			MessageDialog.openError(null, Constants.TITLE, e.getMessage());
 		}
 
 		children = list.toArray(new SchemaElement[list.size()]);

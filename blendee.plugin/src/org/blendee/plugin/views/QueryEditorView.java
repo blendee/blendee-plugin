@@ -39,13 +39,9 @@ public class QueryEditorView extends AbstractView {
 			if (path.length() == 0) return "未入力です";
 
 			boolean[] exists = { false };
-			try {
-				Blendee.execute(t -> {
-					exists[0] = TablePath.parse(path).exists();
-				});
-			} catch (Throwable t) {
-				throw new IllegalStateException(t);
-			}
+			Blendee.execute(t -> {
+				exists[0] = TablePath.parse(path).exists();
+			});
 
 			if (exists[0]) return null;
 

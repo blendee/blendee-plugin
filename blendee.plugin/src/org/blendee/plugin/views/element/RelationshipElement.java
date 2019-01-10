@@ -80,13 +80,9 @@ public class RelationshipElement extends PropertySourceElement {
 	public Element[] getChildren() {
 		if (children != null) return children.clone();
 
-		try {
-			Blendee.execute(t -> {
-				prepareChildren();
-			});
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
-		}
+		Blendee.execute(t -> {
+			prepareChildren();
+		});
 
 		return children.clone();
 	}
@@ -172,39 +168,31 @@ public class RelationshipElement extends PropertySourceElement {
 				remain.remove(pkColumnElements[i]);
 			}
 
-			try {
-				Blendee.execute(t -> {
-					elements.add(
-						new PrimaryKeyElement(
-							this,
-							MetadataUtilities.getPrimaryKeyName(
-								relationship.getTablePath()),
-							pkColumnElements));
-				});
-			} catch (Throwable t) {
-				throw new IllegalStateException(t);
-			}
+			Blendee.execute(t -> {
+				elements.add(
+					new PrimaryKeyElement(
+						this,
+						MetadataUtilities.getPrimaryKeyName(
+							relationship.getTablePath()),
+						pkColumnElements));
+			});
 		}
 
-		try {
-			Blendee.execute(t -> {
-				Relationship[] relations = relationship.getRelationships();
-				for (Relationship element : relations) {
-					RelationshipElement relationshipElement = new RelationshipElement(repository, id, element);
-					relationshipMap.put(element, relationshipElement);
-					elements.add(
-						createForeignKeyElement(
-							repository,
-							relationship,
-							element,
-							relationshipElement,
-							columnMap,
-							remain));
-				}
-			});
-		} catch (Throwable t) {
-			throw new IllegalStateException(t);
-		}
+		Blendee.execute(t -> {
+			Relationship[] relations = relationship.getRelationships();
+			for (Relationship element : relations) {
+				RelationshipElement relationshipElement = new RelationshipElement(repository, id, element);
+				relationshipMap.put(element, relationshipElement);
+				elements.add(
+					createForeignKeyElement(
+						repository,
+						relationship,
+						element,
+						relationshipElement,
+						columnMap,
+						remain));
+			}
+		});
 
 		elements.addAll(remain);
 		children = elements.toArray(new Element[elements.size()]);
@@ -221,25 +209,21 @@ public class RelationshipElement extends PropertySourceElement {
 		String[] fks = reference.getForeignKeyColumnNames();
 		String[] pks = reference.getPrimaryKeyColumnNames();
 		ForeignKeyColumnElement[] columns = new ForeignKeyColumnElement[fks.length];
-		try {
-			Blendee.execute(t -> {
-				for (int i = 0; i < fks.length; i++) {
+		Blendee.execute(t -> {
+			for (int i = 0; i < fks.length; i++) {
 
-					Column key = parent.getColumn(fks[i]);
+				Column key = parent.getColumn(fks[i]);
 
-					ColumnElement base = myColumns.get(key);
+				ColumnElement base = myColumns.get(key);
 
-					ForeignKeyColumnElement fkColumnElement = new ForeignKeyColumnElement(base, pks[i]);
+				ForeignKeyColumnElement fkColumnElement = new ForeignKeyColumnElement(base, pks[i]);
 
-					columns[i] = fkColumnElement;
+				columns[i] = fkColumnElement;
 
-					fkColumnMap.put(key, fkColumnElement);
-					remain.remove(base);
-				}
-			});
-		} catch (Throwable t) {
-			throw new IllegalStateException(t);
-		}
+				fkColumnMap.put(key, fkColumnElement);
+				remain.remove(base);
+			}
+		});
 
 		return new ForeignKeyElement(
 			this,
