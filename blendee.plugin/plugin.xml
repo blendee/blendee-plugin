@@ -24,12 +24,6 @@
             name="Blendee"
             id="org.blendee.plugin"/>
       <view
-            class="org.blendee.plugin.views.QueryEditorView"
-            icon="icons/blendee.png"
-            category="org.blendee.plugin"
-            name="Blendee Select Editor"
-            id="org.blendee.plugin.queryEditorView"/>
-      <view
             category="org.blendee.plugin"
             class="org.blendee.plugin.views.ClassBuilderView"
             icon="icons/blendee.png"
@@ -45,21 +39,12 @@
       </category>
       <command
             categoryId="org.blendee.plugin.commandCategory"
-            id="org.blendee.plugin.restartSelectEditor"
-            name="restartSelectEditor">
-      </command>
-      <command
-            categoryId="org.blendee.plugin.commandCategory"
             id="org.blendee.plugin.restartGenerator"
             name="restartGenerator">
       </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
-      <handler
-            class="org.blendee.plugin.popup.actions.ChangeProjectHandler"
-            commandId="org.blendee.plugin.restartSelectEditor">
-      </handler>
       <handler
             class="org.blendee.plugin.popup.actions.ChangeProjectHandler"
             commandId="org.blendee.plugin.restartGenerator">
@@ -83,12 +68,6 @@
                  </iterate>
               </with>
            </visibleWhen>
-            <command
-                  commandId="org.blendee.plugin.restartSelectEditor"
-                  icon="icons/blendee.png"
-                  label="Select Editor を起動する"
-                  style="push">
-            </command>
             <command
                   commandId="org.blendee.plugin.restartGenerator"
                   icon="icons/blendee.png"

@@ -19,10 +19,6 @@ public class Constants {
 
 	public static final String JDBC_PASSWORD = "jdbcPassword";
 
-	public static final String COLUMN_REPOSITORY_FILE = "columnRepositoryFile";
-
-	public static final String COLUMN_REPOSITORY_FACTORY_CLASS = "columnRepositoryFactoryClass";
-
 	public static final String TRANSACTION_FACTORY_CLASS = "transactionFactoryClass";
 
 	public static final String METADATA_FACTORY_CLASS = "metadataFactoryClass";
@@ -30,8 +26,6 @@ public class Constants {
 	public static final String TABLE_FACADE_PARENT_CLASS = "tableFacadeParentClass";
 
 	public static final String ROW_PARENT_CLASS = "rowParentClass";
-
-	public static final String QUERY_PARENT_CLASS = "queryParentClass";
 
 	public static final String CODE_FORMATTER_CLASS = "codeFormatterClass";
 

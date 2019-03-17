@@ -17,18 +17,14 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.blendee.assist.Query;
 import org.blendee.codegen.CodeFormatter;
-import org.blendee.internal.HomeStorage;
 import org.blendee.internal.U;
 import org.blendee.jdbc.MetadataFactory;
 import org.blendee.jdbc.OptionKey;
 import org.blendee.jdbc.TransactionFactory;
 import org.blendee.plugin.views.ClassBuilderView;
-import org.blendee.plugin.views.QueryEditorView;
-import org.blendee.selector.ColumnRepositoryFactory;
-import org.blendee.assist.Query;
 import org.blendee.util.BlendeeConstants;
-import org.blendee.util.FileColumnRepositoryFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -60,11 +56,7 @@ public class BlendeePlugin extends AbstractUIPlugin {
 
 	private static BlendeePlugin plugin;
 
-	private final Map<IJavaProject, ColumnRepositoryFactory> columnRepositoryFactoryMap = new HashMap<>();
-
 	private IJavaProject currentProject;
-
-	private QueryEditorView queryEditorView;
 
 	private ClassBuilderView classBuilderView;
 
@@ -75,8 +67,6 @@ public class BlendeePlugin extends AbstractUIPlugin {
 	private Class<?> tableFacadeParentClass;
 
 	private Class<?> rowParentClass;
-
-	private Class<?> queryParentClass;
 
 	private CodeFormatter codeFormatter;
 
@@ -169,9 +159,10 @@ public class BlendeePlugin extends AbstractUIPlugin {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (currentProject != null) {
-			InstanceScope.INSTANCE.getNode(pluginId).put(
-				currentProjectKeyName,
-				currentProject.getElementName());
+			InstanceScope.INSTANCE.getNode(pluginId)
+				.put(
+					currentProjectKeyName,
+					currentProject.getElementName());
 		}
 
 		super.stop(context);
@@ -190,14 +181,7 @@ public class BlendeePlugin extends AbstractUIPlugin {
 		checkProject(project);
 		currentProject = project;
 		refresh();
-		if (queryEditorView != null) queryEditorView.reset();
 		if (classBuilderView != null) classBuilderView.reset();
-	}
-
-	public ColumnRepositoryFactory getColumnRepositoryFactory() {
-		ColumnRepositoryFactory factory = columnRepositoryFactoryMap.get(currentProject);
-		if (factory == null) throw new IllegalStateException();
-		return factory;
 	}
 
 	public Class<?> getTableFacadeParentClass() {
@@ -206,10 +190,6 @@ public class BlendeePlugin extends AbstractUIPlugin {
 
 	public Class<?> getRowParentClass() {
 		return rowParentClass;
-	}
-
-	public Class<?> getQueryParentClass() {
-		return queryParentClass;
 	}
 
 	public CodeFormatter getCodeFormatter() {
@@ -300,14 +280,6 @@ public class BlendeePlugin extends AbstractUIPlugin {
 		return schemaNames;
 	}
 
-	public QueryEditorView getQueryEditorView() {
-		return queryEditorView;
-	}
-
-	public void setQueryEditorView(QueryEditorView view) {
-		this.queryEditorView = view;
-	}
-
 	public ClassBuilderView getClassBuilderView() {
 		return classBuilderView;
 	}
@@ -355,14 +327,6 @@ public class BlendeePlugin extends AbstractUIPlugin {
 
 		init.put(BlendeeConstants.SCHEMA_NAMES, schemaNameArray);
 
-		String columnRepositoryFile = generalizeColumnRepositoryFilePath(
-			currentProject,
-			properties.getProperty(Constants.COLUMN_REPOSITORY_FILE));
-		init.put(BlendeeConstants.COLUMN_REPOSITORY_FILE, columnRepositoryFile);
-
-		//初回まだ保存されていないのでここでとりあえず
-		storeColumnRepositoryFileToHome(currentProject.getElementName(), columnRepositoryFile);
-
 		JavaProjectClassLoader loader;
 		try {
 			loader = new JavaProjectClassLoader(
@@ -384,7 +348,6 @@ public class BlendeePlugin extends AbstractUIPlugin {
 			init.put(BlendeeConstants.JDBC_PASSWORD, BlendeePlugin.load(currentProject, Constants.JDBC_PASSWORD));
 		}
 
-		Class<? extends ColumnRepositoryFactory> columnRepositoryFactoryClass;
 		try {
 			{
 				String classString = properties.getProperty(Constants.TRANSACTION_FACTORY_CLASS);
@@ -397,20 +360,6 @@ public class BlendeePlugin extends AbstractUIPlugin {
 				if (U.presents(classString))
 					init.put(BlendeeConstants.METADATA_FACTORY_CLASS, Class.forName(classString, false, loader));
 			}
-
-			{
-				String classString = properties.getProperty(Constants.COLUMN_REPOSITORY_FACTORY_CLASS);
-				if (U.presents(classString)) {
-					@SuppressWarnings("unchecked")
-					Class<? extends ColumnRepositoryFactory> casted = (Class<? extends ColumnRepositoryFactory>) Class
-						.forName(classString, false, loader);
-
-					columnRepositoryFactoryClass = casted;
-					init.put(BlendeeConstants.COLUMN_REPOSITORY_FACTORY_CLASS, columnRepositoryFactoryClass);
-				} else {
-					columnRepositoryFactoryClass = FileColumnRepositoryFactory.class;
-				}
-			}
 		} catch (ClassNotFoundException e) {
 			throw new JavaProjectException(e);
 		}
@@ -420,14 +369,6 @@ public class BlendeePlugin extends AbstractUIPlugin {
 		try {
 			BlendeeStarter.start(loader, init);
 
-			columnRepositoryFactoryMap.put(
-				currentProject,
-				columnRepositoryFactoryClass.getDeclaredConstructor().newInstance());
-		} catch (Exception e) {
-			throw new JavaProjectException(e);
-		}
-
-		try {
 			String tableFacadeParentClassName = properties.getProperty(Constants.TABLE_FACADE_PARENT_CLASS);
 			if (U.presents(tableFacadeParentClassName)) {
 				tableFacadeParentClass = Class.forName(tableFacadeParentClassName, false, loader);
@@ -440,13 +381,6 @@ public class BlendeePlugin extends AbstractUIPlugin {
 				rowParentClass = Class.forName(rowParentClassName, false, loader);
 			} else {
 				rowParentClass = null;
-			}
-
-			String queryParentClassName = properties.getProperty(Constants.QUERY_PARENT_CLASS);
-			if (U.presents(queryParentClassName)) {
-				queryParentClass = Class.forName(queryParentClassName, false, loader);
-			} else {
-				queryParentClass = null;
 			}
 
 			String codeFormatterClassName = properties.getProperty(Constants.CODE_FORMATTER_CLASS);
@@ -520,11 +454,6 @@ public class BlendeePlugin extends AbstractUIPlugin {
 		checkRequiredClass(
 			false,
 			project,
-			ColumnRepositoryFactory.class,
-			properties.getProperty(Constants.COLUMN_REPOSITORY_FACTORY_CLASS));
-		checkRequiredClass(
-			false,
-			project,
 			MetadataFactory.class,
 			properties.getProperty(Constants.METADATA_FACTORY_CLASS));
 	}
@@ -544,13 +473,6 @@ public class BlendeePlugin extends AbstractUIPlugin {
 		}
 
 		return false;
-	}
-
-	public static void storeColumnRepositoryFileToHome(String projectName, String file) {
-		HomeStorage storage = new HomeStorage(projectName);
-		Properties properties = storage.loadProperties();
-		properties.put(FileColumnRepositoryFactory.COLUMN_REPOSITORY_FILE_KEY, file);
-		storage.storeProperties(properties);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -2,7 +2,6 @@ package org.blendee.plugin.properties;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.sql.Driver;
@@ -15,7 +14,6 @@ import org.blendee.jdbc.TransactionFactory;
 import org.blendee.plugin.BlendeePlugin;
 import org.blendee.plugin.BlendeePlugin.JavaProjectException;
 import org.blendee.plugin.Constants;
-import org.blendee.selector.ColumnRepositoryFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -26,7 +24,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -152,86 +149,8 @@ public class BlendeePropertyPage
 		addField(jdbcPasswordEditor);
 
 		/*---------------------------------------------------*/
-		File root = element.getProject().getLocation().toFile();
-		FileFieldEditor columnRepositoryFileEditor = new FileFieldEditor(
-			Constants.COLUMN_REPOSITORY_FILE,
-			"ColumnRepository ファイル",
-			false,
-			StringFieldEditor.VALIDATE_ON_FOCUS_LOST,
-			getFieldEditorParent()) {
-
-			@Override
-			protected String changePressed() {
-				String path = super.changePressed();
-				if (!U.presents(path)) return path;
-				return BlendeePlugin.regularizeColumnRepositoryFilePath(element, path);
-			}
-
-			@Override
-			protected boolean checkState() {
-				clearErrorMessage();
-
-				String path = getTextControl().getText();
-				if (path != null) {
-					path = path.trim();
-				} else {
-					path = "";
-				}
-
-				if (path.length() == 0) {
-					if (!isEmptyStringAllowed()) {
-						return true;
-					}
-				}
-
-				boolean result = new File(
-					BlendeePlugin.generalizeColumnRepositoryFilePath(element, path)).exists();
-
-				if (!result) showErrorMessage("ファイルが存在しません");
-
-				return result;
-			}
-		};
-
-		columnRepositoryFileEditor.setFilterPath(root);
-		columnRepositoryFileEditor.setChangeButtonText("参照...");
-		columnRepositoryFileEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_FOCUS_LOST);
-		columnRepositoryFileEditor.setEmptyStringAllowed(true);
-		addField(columnRepositoryFileEditor);
-
-		/*---------------------------------------------------*/
 		Label label = new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL);
 		label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 3, 1));
-
-		/*---------------------------------------------------*/
-		ClassFieldEditor columnRepositoryClassEditor = new ClassFieldEditor(
-			Constants.COLUMN_REPOSITORY_FACTORY_CLASS,
-			"&ColumnRepositoryFactory 実装クラス",
-			element.getProject(),
-			getFieldEditorParent()) {
-
-			@Override
-			protected boolean doCheckState() {
-				if (!U.presents(getStringValue())) return true;
-
-				try {
-					BlendeePlugin.checkRequiredClass(
-						true,
-						element,
-						ColumnRepositoryFactory.class,
-						getStringValue());
-				} catch (JavaProjectException e) {
-					setErrorMessage(e.getMessage());
-					return false;
-				}
-
-				return true;
-			}
-		};
-
-		columnRepositoryClassEditor.setChangeButtonText("参照...");
-		columnRepositoryClassEditor.setEmptyStringAllowed(true);
-		addField(columnRepositoryClassEditor);
 
 		/*---------------------------------------------------*/
 		ClassFieldEditor transactionFactoryClassEditor = new ClassFieldEditor(
@@ -397,9 +316,10 @@ public class BlendeePropertyPage
 
 		changed |= checkAndSetValue(store, properties, Constants.SCHEMA_NAMES);
 
-		BlendeePlugin.getDefault().setSchemaNames(
-			BlendeePlugin.splitByBlankAndRemoveEmptyString(
-				properties.getProperty(Constants.SCHEMA_NAMES)));
+		BlendeePlugin.getDefault()
+			.setSchemaNames(
+				BlendeePlugin.splitByBlankAndRemoveEmptyString(
+					properties.getProperty(Constants.SCHEMA_NAMES)));
 
 		changed |= checkAndSetValue(store, properties, Constants.OUTPUT_PACKAGE_NAME);
 
@@ -411,16 +331,6 @@ public class BlendeePropertyPage
 
 		BlendeePlugin.save(element, Constants.JDBC_PASSWORD, store.getString(Constants.JDBC_PASSWORD));
 
-		changed |= checkAndSetValue(store, properties, Constants.COLUMN_REPOSITORY_FILE);
-
-		BlendeePlugin.storeColumnRepositoryFileToHome(
-			element.getElementName(),
-			BlendeePlugin.generalizeColumnRepositoryFilePath(
-				element,
-				properties.getProperty(Constants.COLUMN_REPOSITORY_FILE, "")));
-
-		changed |= checkAndSetValue(store, properties, Constants.COLUMN_REPOSITORY_FACTORY_CLASS);
-
 		changed |= checkAndSetValue(store, properties, Constants.TRANSACTION_FACTORY_CLASS);
 
 		changed |= checkAndSetValue(store, properties, Constants.METADATA_FACTORY_CLASS);
@@ -428,8 +338,6 @@ public class BlendeePropertyPage
 		changed |= checkAndSetValue(store, properties, Constants.TABLE_FACADE_PARENT_CLASS);
 
 		changed |= checkAndSetValue(store, properties, Constants.ROW_PARENT_CLASS);
-
-		changed |= checkAndSetValue(store, properties, Constants.QUERY_PARENT_CLASS);
 
 		changed |= checkAndSetValue(store, properties, Constants.CODE_FORMATTER_CLASS);
 
@@ -502,14 +410,6 @@ public class BlendeePropertyPage
 			BlendeePlugin.load(element, Constants.JDBC_PASSWORD));
 
 		store.setDefault(
-			Constants.COLUMN_REPOSITORY_FILE,
-			store.getString(Constants.COLUMN_REPOSITORY_FILE));
-
-		store.setDefault(
-			Constants.COLUMN_REPOSITORY_FACTORY_CLASS,
-			store.getString(Constants.COLUMN_REPOSITORY_FACTORY_CLASS));
-
-		store.setDefault(
 			Constants.TRANSACTION_FACTORY_CLASS,
 			store.getString(Constants.TRANSACTION_FACTORY_CLASS));
 
@@ -524,10 +424,6 @@ public class BlendeePropertyPage
 		store.setDefault(
 			Constants.ROW_PARENT_CLASS,
 			store.getString(Constants.ROW_PARENT_CLASS));
-
-		store.setDefault(
-			Constants.QUERY_PARENT_CLASS,
-			store.getString(Constants.QUERY_PARENT_CLASS));
 
 		store.setDefault(
 			Constants.CODE_FORMATTER_CLASS,
