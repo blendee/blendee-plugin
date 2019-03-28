@@ -55,26 +55,23 @@
       <menuContribution
             allPopups="true"
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
-         <menu
-               label="Blendee">
-           <visibleWhen
-                 checkEnabled="false">
-              <with
-                    variable="activeMenuSelection">
-                 <iterate>
-                    <adapt
-                          type="org.eclipse.core.resources.IProject">
-                    </adapt>
-                 </iterate>
-              </with>
-           </visibleWhen>
-            <command
-                  commandId="org.blendee.plugin.restartGenerator"
-                  icon="icons/blendee.png"
-                  label="Generator を起動する"
-                  style="push">
-            </command>
-         </menu>
+         <command
+               commandId="org.blendee.plugin.restartGenerator"
+               icon="icons/blendee.png"
+               label="Open Blendee"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeMenuSelection">
+                  <iterate>
+                     <adapt
+                           type="org.eclipse.core.resources.IProject">
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
 

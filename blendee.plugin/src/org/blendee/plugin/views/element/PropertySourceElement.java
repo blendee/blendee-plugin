@@ -23,19 +23,19 @@ abstract class PropertySourceElement implements Element, IPropertySource {
 
 	private static final PropertyDescriptor projectPropertyDescriptor = new PropertyDescriptor(
 		projectId,
-		"プロジェクト");
+		"Project");
 
 	private static final PropertyDescriptor namePropertyDescriptor = new PropertyDescriptor(
 		nameId,
-		"名前");
+		"Name");
 
 	private static final PropertyDescriptor pathPropertyDescriptor = new PropertyDescriptor(
 		pathId,
-		"パス");
+		"Path");
 
 	private static final PropertyDescriptor typePropertyDescriptor = new PropertyDescriptor(
 		typeId,
-		"タイプ");
+		"Type");
 
 	private final Map<String, String> values = new HashMap<>();
 

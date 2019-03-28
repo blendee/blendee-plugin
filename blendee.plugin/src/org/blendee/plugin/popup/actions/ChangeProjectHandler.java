@@ -43,7 +43,8 @@ public class ChangeProjectHandler extends AbstractHandler {
 			MessageDialog.openError(
 				null,
 				Constants.TITLE,
-				"設定に問題があります" + U.LINE_SEPARATOR + t.getMessage());
+				//設定に問題があります
+				"An unexpected error has occurred." + U.LINE_SEPARATOR + t.getMessage());
 		}
 
 		return null;

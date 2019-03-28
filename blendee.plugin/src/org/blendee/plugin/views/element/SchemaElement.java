@@ -89,7 +89,7 @@ public class SchemaElement extends PropertySourceElement {
 
 	@Override
 	String getType() {
-		return "スキーマ";
+		return "Schema";
 	}
 
 	void refresh(TablePath table) {
@@ -107,7 +107,8 @@ public class SchemaElement extends PropertySourceElement {
 		private TableElement[] elements;
 
 		private AllBuildAction() {
-			String text = "すべてのテーブルに Blendee クラスを生成する";
+			//すべてのテーブルに Blendee クラスを生成する
+			String text = "Genarate TableFacade classes on all tables";
 			setText(text);
 			setToolTipText(text);
 			setImageDescriptor(Constants.SCHEMA_ICON);
@@ -135,7 +136,8 @@ public class SchemaElement extends PropertySourceElement {
 		private TableElement[] elements;
 
 		private RebuildAction() {
-			String text = "すべての Blendee クラスを再生成する";
+			//すべての Blendee クラスを再生成する
+			String text = "Regenerate all generated TableFacade classes";
 			setText(text);
 			setToolTipText(text);
 			setImageDescriptor(Constants.SCHEMA_ICON);

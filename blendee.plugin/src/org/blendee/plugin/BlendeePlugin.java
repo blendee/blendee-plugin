@@ -86,25 +86,30 @@ public class BlendeePlugin extends AbstractUIPlugin {
 		throws JavaProjectException {
 		if (className == null || className.length() == 0) {
 			if (!required) return;
-			throw new JavaProjectException(superInterface.getName() + " の実装クラス名が空です");
+			//superInterface.getName() + " の実装クラス名が空です"
+			throw new JavaProjectException("Subclass of " + superInterface.getName() + " is empty.");
 		}
 
 		try {
 			IType target = project.findType(className);
 			if (target == null) {
-				throw new JavaProjectException("存在するクラスを指定する必要があります");
+				//存在するクラスを指定する必要があります
+				throw new JavaProjectException("Specify an existing class.");
 			}
 			IType factoryType = project.findType(superInterface.getName());
 			if (factoryType == null) {
-				throw new JavaProjectException("プロジェクト内に " + superInterface.getName() + " が見つかりません");
+				//"プロジェクト内に " + superInterface.getName() + " が見つかりません"
+				throw new JavaProjectException(superInterface.getName() + " not found in project.");
 			}
 
 			if (target.isInterface()) {
-				throw new JavaProjectException("インターフェイスは指定できません");
+				//インターフェイスは指定できません
+				throw new JavaProjectException("Interface can not be specified.");
 			}
 
 			if (Flags.isAbstract(target.getFlags())) {
-				throw new JavaProjectException("抽象クラスは指定できません");
+				//抽象クラスは指定できません
+				throw new JavaProjectException("Abstract class can not be specified.");
 			}
 
 			String superclass;
@@ -120,15 +125,18 @@ public class BlendeePlugin extends AbstractUIPlugin {
 
 				IType[] resolved = resolveType(project, target, superclass);
 				if (resolved.length == 0)
-					throw new JavaProjectException(target.getFullyQualifiedName() + " が見つかりません");
+					//target.getFullyQualifiedName() + " が見つかりません"
+					throw new JavaProjectException(target.getFullyQualifiedName() + " not found.");
 
 				target = resolved[0];
 			}
 
 			throw new JavaProjectException(
-				"指定されたクラスは " + superInterface.getName() + " を実装していません");
+				//"指定されたクラスは " + superInterface.getName() + " を実装していません"
+				"The specified class does not implement " + superInterface.getName() + ".");
 		} catch (JavaModelException e) {
-			throw new JavaProjectException(className + " に問題があります");
+			e.printStackTrace();
+			throw new JavaProjectException(e);
 		}
 	}
 

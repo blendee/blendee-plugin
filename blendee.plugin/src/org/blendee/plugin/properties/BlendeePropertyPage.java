@@ -36,11 +36,13 @@ public class BlendeePropertyPage
 	extends FieldEditorPreferencePage
 	implements IWorkbenchPropertyPage {
 
+	private static final String SEARCH = "Search...";
+
 	private IJavaProject element;
 
 	public BlendeePropertyPage() {
 		super(GRID);
-		setDescription(Constants.TITLE + " 設定");
+		setDescription(Constants.TITLE + " Settings");
 	}
 
 	@Override
@@ -71,8 +73,10 @@ public class BlendeePropertyPage
 		/*---------------------------------------------------*/
 		final StringFieldEditor schemaNamesEditor = new StringFieldEditor(
 			Constants.SCHEMA_NAMES,
-			"スキーマ名 (スペースで区切って複数入力可)",
-			getFieldEditorParent()) {};
+			//スキーマ名 (スペースで区切って複数入力可)
+			"Schema Names (separated by spaces)",
+			getFieldEditorParent()) {
+		};
 
 		schemaNamesEditor.setEmptyStringAllowed(true);
 		addField(schemaNamesEditor);
@@ -80,43 +84,15 @@ public class BlendeePropertyPage
 		/*---------------------------------------------------*/
 		StringFieldEditor packagesEditor = new StringFieldEditor(
 			Constants.OUTPUT_PACKAGE_NAME,
-			"生成する Data Object の出力パッケージ名",
-			getFieldEditorParent()) {};
+			//生成する TableFacade の出力パッケージ名
+			"Output Package Name (for generated class)",
+			getFieldEditorParent()) {
+		};
 
 		packagesEditorContainer[0] = packagesEditor;
 		packagesEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_FOCUS_LOST);
 		packagesEditor.setEmptyStringAllowed(true);
 		addField(packagesEditor);
-
-		/*---------------------------------------------------*/
-		ClassFieldEditor jdbcDriverClassEditor = new ClassFieldEditor(
-			Constants.JDBC_DRIVER_CLASS,
-			"JDBC Driver クラス",
-			element.getProject(),
-			getFieldEditorParent()) {
-
-			@Override
-			protected boolean doCheckState() {
-				if (!U.presents(getStringValue())) return true;
-
-				try {
-					BlendeePlugin.checkRequiredClass(
-						true,
-						element,
-						Driver.class,
-						getStringValue());
-				} catch (JavaProjectException e) {
-					setErrorMessage(e.getMessage());
-					return false;
-				}
-
-				return true;
-			}
-		};
-
-		jdbcDriverClassEditor.setChangeButtonText("参照...");
-		jdbcDriverClassEditor.setEmptyStringAllowed(true);
-		addField(jdbcDriverClassEditor);
 
 		/*---------------------------------------------------*/
 		StringFieldEditor jdbcURLEditor = new StringFieldEditor(
@@ -131,7 +107,7 @@ public class BlendeePropertyPage
 		/*---------------------------------------------------*/
 		StringFieldEditor jdbcUserEditor = new StringFieldEditor(
 			Constants.JDBC_USER,
-			"JDBC ユーザー名",
+			"JDBC User Name",
 			getFieldEditorParent());
 
 		jdbcUserEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_FOCUS_LOST);
@@ -141,7 +117,7 @@ public class BlendeePropertyPage
 		/*---------------------------------------------------*/
 		StringFieldEditor jdbcPasswordEditor = new StringFieldEditor(
 			Constants.JDBC_PASSWORD,
-			"JDBC パスワード",
+			"JDBC Password",
 			getFieldEditorParent());
 
 		jdbcPasswordEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_FOCUS_LOST);
@@ -155,7 +131,7 @@ public class BlendeePropertyPage
 		/*---------------------------------------------------*/
 		ClassFieldEditor transactionFactoryClassEditor = new ClassFieldEditor(
 			Constants.TRANSACTION_FACTORY_CLASS,
-			"TransactionFactory 実装クラス",
+			"Implementation of TransactionFactory",
 			element.getProject(),
 			getFieldEditorParent()) {
 
@@ -178,14 +154,14 @@ public class BlendeePropertyPage
 			}
 		};
 
-		transactionFactoryClassEditor.setChangeButtonText("参照...");
+		transactionFactoryClassEditor.setChangeButtonText(SEARCH);
 		transactionFactoryClassEditor.setEmptyStringAllowed(true);
 		addField(transactionFactoryClassEditor);
 
 		/*---------------------------------------------------*/
 		ClassFieldEditor metadataFactoryClassEditor = new ClassFieldEditor(
 			Constants.METADATA_FACTORY_CLASS,
-			"MetadataFactory 実装クラス",
+			"Implementation of MetadataFactory",
 			element.getProject(),
 			getFieldEditorParent()) {
 
@@ -208,14 +184,15 @@ public class BlendeePropertyPage
 			}
 		};
 
-		metadataFactoryClassEditor.setChangeButtonText("参照...");
+		metadataFactoryClassEditor.setChangeButtonText(SEARCH);
 		metadataFactoryClassEditor.setEmptyStringAllowed(true);
 		addField(metadataFactoryClassEditor);
 
 		/*---------------------------------------------------*/
 		ClassFieldEditor managerParentClassEditor = new ClassFieldEditor(
 			Constants.TABLE_FACADE_PARENT_CLASS,
-			"自動生成 TableFacade の親クラス",
+			//自動生成 TableFacade の親クラス
+			"Superlass of TableFacade",
 			element.getProject(),
 			getFieldEditorParent()) {
 
@@ -223,7 +200,8 @@ public class BlendeePropertyPage
 			protected boolean doCheckState() {
 				String typeName = getStringValue();
 				if (U.presents(typeName) && findType(typeName) == null) {
-					setErrorMessage("プロジェクト内にクラス " + typeName + " が見つかりません");
+					//"プロジェクト内にクラス " + typeName + " が見つかりません"
+					setErrorMessage("Class " + typeName + " not found.");
 					return false;
 				}
 
@@ -231,14 +209,15 @@ public class BlendeePropertyPage
 			}
 		};
 
-		managerParentClassEditor.setChangeButtonText("参照...");
+		managerParentClassEditor.setChangeButtonText(SEARCH);
 		managerParentClassEditor.setEmptyStringAllowed(true);
 		addField(managerParentClassEditor);
 
 		/*---------------------------------------------------*/
 		ClassFieldEditor rowParentClassEditor = new ClassFieldEditor(
 			Constants.ROW_PARENT_CLASS,
-			"自動生成 Row の親クラス",
+			//自動生成 Row の親クラス
+			"Superclass of Row",
 			element.getProject(),
 			getFieldEditorParent()) {
 
@@ -246,7 +225,8 @@ public class BlendeePropertyPage
 			protected boolean doCheckState() {
 				String typeName = getStringValue();
 				if (U.presents(typeName) && findType(typeName) == null) {
-					setErrorMessage("プロジェクト内にクラス " + typeName + " が見つかりません");
+					//"プロジェクト内にクラス " + typeName + " が見つかりません"
+					setErrorMessage("Class " + typeName + " not found.");
 					return false;
 				}
 
@@ -254,14 +234,14 @@ public class BlendeePropertyPage
 			}
 		};
 
-		rowParentClassEditor.setChangeButtonText("参照...");
+		rowParentClassEditor.setChangeButtonText(SEARCH);
 		rowParentClassEditor.setEmptyStringAllowed(true);
 		addField(rowParentClassEditor);
 
 		/*---------------------------------------------------*/
 		ClassFieldEditor codeFormatterClassEditor = new ClassFieldEditor(
 			Constants.CODE_FORMATTER_CLASS,
-			"CodeFormatter 実装クラス",
+			"Implementation of CodeFormatter",
 			element.getProject(),
 			getFieldEditorParent()) {
 
@@ -284,14 +264,45 @@ public class BlendeePropertyPage
 			}
 		};
 
-		codeFormatterClassEditor.setChangeButtonText("参照...");
+		codeFormatterClassEditor.setChangeButtonText(SEARCH);
 		codeFormatterClassEditor.setEmptyStringAllowed(true);
 		addField(codeFormatterClassEditor);
 
 		/*---------------------------------------------------*/
+		ClassFieldEditor jdbcDriverClassEditor = new ClassFieldEditor(
+			Constants.JDBC_DRIVER_CLASS,
+			"JDBC Driver",
+			element.getProject(),
+			getFieldEditorParent()) {
+
+			@Override
+			protected boolean doCheckState() {
+				if (!U.presents(getStringValue())) return true;
+
+				try {
+					BlendeePlugin.checkRequiredClass(
+						true,
+						element,
+						Driver.class,
+						getStringValue());
+				} catch (JavaProjectException e) {
+					setErrorMessage(e.getMessage());
+					return false;
+				}
+
+				return true;
+			}
+		};
+
+		jdbcDriverClassEditor.setChangeButtonText(SEARCH);
+		jdbcDriverClassEditor.setEmptyStringAllowed(true);
+		addField(jdbcDriverClassEditor);
+
+		/*---------------------------------------------------*/
 		BooleanFieldEditor useNumberClassEditor = new BooleanFieldEditor(
 			Constants.USE_NUMBER_CLASS,
-			"Row の数値項目を Number に統一",
+			//Row の数値項目を Number に統一
+			"Unify numeric properties of Row into Number",
 			BooleanFieldEditor.SEPARATE_LABEL,
 			getFieldEditorParent());
 		addField(useNumberClassEditor);
@@ -299,7 +310,8 @@ public class BlendeePropertyPage
 		/*---------------------------------------------------*/
 		BooleanFieldEditor notUseNullGuardEditor = new BooleanFieldEditor(
 			Constants.NOT_USE_NULL_GUARD,
-			"Row の項目で null 保護機能を使用しない",
+			//Row の項目で null 保護機能を使用しない
+			"Do not use null protection on Row properties",
 			BooleanFieldEditor.SEPARATE_LABEL,
 			getFieldEditorParent());
 		addField(notUseNullGuardEditor);
@@ -444,7 +456,8 @@ public class BlendeePropertyPage
 		PreferenceStore store = new PreferenceStore() {
 
 			@Override
-			public void save() {}
+			public void save() {
+			}
 		};
 
 		try {

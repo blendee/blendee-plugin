@@ -103,7 +103,7 @@ public class TableElement extends PropertySourceElement {
 
 	@Override
 	String getType() {
-		return "テーブル";
+		return "Table";
 	}
 
 	void build() throws Exception {
@@ -113,7 +113,8 @@ public class TableElement extends PropertySourceElement {
 
 		IPackageFragment baseFragment = BlendeePlugin.findPackage(packageName);
 		if (baseFragment == null)
-			throw new IllegalStateException("パッケージ " + packageName + " が存在しません");
+			//"パッケージ " + packageName + " が存在しません"
+			throw new IllegalStateException("Package " + packageName + " not found.");
 
 		IPackageFragmentRoot fragmentRoot = findPackageRoot(baseFragment);
 
@@ -248,7 +249,8 @@ public class TableElement extends PropertySourceElement {
 		private TableElement element;
 
 		private TableAction() {
-			String text = "Table クラスを生成する";
+			//Table クラスを生成する
+			String text = "Generate TableFacade";
 			setText(text);
 			setToolTipText(text);
 			setImageDescriptor(Constants.TABLE_ICON);

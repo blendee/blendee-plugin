@@ -64,13 +64,15 @@ public class ClassBuilderView extends AbstractView {
 		}
 
 		@Override
-		public void dispose() {}
+		public void dispose() {
+		}
 
 		@Override
 		public void inputChanged(
 			Viewer viewer,
 			Object oldInput,
-			Object newInput) {}
+			Object newInput) {
+		}
 
 		private void reset() {
 			if (BlendeePlugin.getDefault().getProject() == null) {
@@ -186,7 +188,9 @@ public class ClassBuilderView extends AbstractView {
 				viewer.refresh();
 			}
 		};
-		String collapseAllActionText = "すべて縮小表示";
+
+		//すべて縮小表示
+		String collapseAllActionText = "Collapse All";
 		collapseAllAction.setText(collapseAllActionText);
 		collapseAllAction.setToolTipText(collapseAllActionText);
 		collapseAllAction.setImageDescriptor(Constants.COLLAPSE_ALL_ICON);
@@ -199,7 +203,8 @@ public class ClassBuilderView extends AbstractView {
 				if (!MessageDialog.openConfirm(
 					viewer.getControl().getShell(),
 					Constants.TITLE,
-					"全ての情報の再読込みを行います")) return;
+					//全ての情報の再読込みを行います
+					"Refresh schema information?")) return;
 				BlendeePlugin plugin = BlendeePlugin.getDefault();
 				try {
 					plugin.setProjectAndRefresh(plugin.getProject());
@@ -209,7 +214,8 @@ public class ClassBuilderView extends AbstractView {
 			}
 		};
 
-		String refreshActionText = "再読込み";
+		//再読込み
+		String refreshActionText = "Refresh";
 		refreshAction.setText(refreshActionText);
 		refreshAction.setToolTipText(refreshActionText);
 		refreshAction.setImageDescriptor(Constants.REFESH_ICON);
