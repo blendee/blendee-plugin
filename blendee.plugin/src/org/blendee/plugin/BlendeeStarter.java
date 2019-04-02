@@ -20,16 +20,9 @@ public class BlendeeStarter {
 		JavaProjectClassLoader loader,
 		Map<OptionKey<?>, ?> initValues)
 		throws Exception {
-		PluginDriverTransactionFactory.setClassLoader(loader);
-		PluginAnnotationMetadataFactory.setClassLoader(loader);
 		PluginTableFacadeGenerator.setClassLoader(loader);
 
 		ContextManager.newStrategy();
-
-		Blendee.setDefaultTransactionFactoryClass(
-			PluginDriverTransactionFactory.class);
-		Blendee.setDefaultMetadataFactoryClass(
-			PluginAnnotationMetadataFactory.class);
 
 		//過去のキャッシュがあるかもしれないのでクリアしておく
 		Blendee.clearCache();

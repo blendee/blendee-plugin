@@ -359,14 +359,22 @@ public class BlendeePlugin extends AbstractUIPlugin {
 		try {
 			{
 				String classString = properties.getProperty(Constants.TRANSACTION_FACTORY_CLASS);
-				if (U.presents(classString))
+				if (U.presents(classString)) {
 					init.put(BlendeeConstants.TRANSACTION_FACTORY_CLASS, Class.forName(classString, false, loader));
+				} else {
+					PluginDriverTransactionFactory.setClassLoader(loader);
+					init.put(BlendeeConstants.TRANSACTION_FACTORY_CLASS, PluginDriverTransactionFactory.class);
+				}
 			}
 
 			{
 				String classString = properties.getProperty(Constants.METADATA_FACTORY_CLASS);
-				if (U.presents(classString))
+				if (U.presents(classString)) {
 					init.put(BlendeeConstants.METADATA_FACTORY_CLASS, Class.forName(classString, false, loader));
+				} else {
+					PluginAnnotationMetadataFactory.setClassLoader(loader);
+					init.put(BlendeeConstants.METADATA_FACTORY_CLASS, PluginAnnotationMetadataFactory.class);
+				}
 			}
 		} catch (ClassNotFoundException e) {
 			throw new JavaProjectException(e);
