@@ -126,7 +126,7 @@ public class BlendeePlugin extends AbstractUIPlugin {
 				IType[] resolved = resolveType(project, target, superclass);
 				if (resolved.length == 0)
 					//target.getFullyQualifiedName() + " が見つかりません"
-					throw new JavaProjectException(target.getFullyQualifiedName() + " not found.");
+					throw new JavaProjectException(target.getFullyQualifiedName() + " not found");
 
 				target = resolved[0];
 			}

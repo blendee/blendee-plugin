@@ -18,7 +18,7 @@ public class PluginAnnotationMetadataFactory extends AnnotationMetadataFactory {
 
 	@Override
 	public Metadata createMetadata() {
-		return new Metadatas(new JDBCMetadata(), super.createMetadata());
+		return new Metadatas(super.createMetadata(), new JDBCMetadata());
 	}
 
 	@Override

@@ -2,7 +2,6 @@ package org.blendee.plugin;
 
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import org.blendee.util.DriverManagerTransactionFactory;
 
@@ -30,8 +29,7 @@ public class PluginDriverTransactionFactory extends DriverManagerTransactionFact
 	}
 
 	@Override
-	protected Connection getConnection(String url, String user, String password)
-		throws SQLException {
+	protected Connection getJDBCConnection() {
 		try {
 			return (Connection) proxyClass
 				.getMethod(
@@ -39,7 +37,7 @@ public class PluginDriverTransactionFactory extends DriverManagerTransactionFact
 					String.class,
 					String.class,
 					String.class)
-				.invoke(null, url, user, password);
+				.invoke(null, url(), user(), password());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

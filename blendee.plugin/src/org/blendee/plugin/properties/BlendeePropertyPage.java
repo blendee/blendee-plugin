@@ -201,7 +201,7 @@ public class BlendeePropertyPage
 				String typeName = getStringValue();
 				if (U.presents(typeName) && findType(typeName) == null) {
 					//"プロジェクト内にクラス " + typeName + " が見つかりません"
-					setErrorMessage("Class " + typeName + " not found.");
+					setErrorMessage("Class " + typeName + " not found");
 					return false;
 				}
 
@@ -226,7 +226,7 @@ public class BlendeePropertyPage
 				String typeName = getStringValue();
 				if (U.presents(typeName) && findType(typeName) == null) {
 					//"プロジェクト内にクラス " + typeName + " が見つかりません"
-					setErrorMessage("Class " + typeName + " not found.");
+					setErrorMessage("Class " + typeName + " not found");
 					return false;
 				}
 

@@ -114,7 +114,7 @@ public class TableElement extends PropertySourceElement {
 		IPackageFragment baseFragment = BlendeePlugin.findPackage(packageName);
 		if (baseFragment == null)
 			//"パッケージ " + packageName + " が存在しません"
-			throw new IllegalStateException("Package " + packageName + " not found.");
+			throw new IllegalStateException("Package " + packageName + " not found");
 
 		IPackageFragmentRoot fragmentRoot = findPackageRoot(baseFragment);
 
