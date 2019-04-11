@@ -24,9 +24,9 @@ public class GeneratorRootElement implements Element {
 				}
 			});
 		} catch (BlendeeException e) {
-			e = BlendeePlugin.strip(e);
-			e.printStackTrace();
-			MessageDialog.openError(null, Constants.TITLE, e.getMessage());
+			Throwable t = BlendeePlugin.strip(e);
+			t.printStackTrace();
+			MessageDialog.openError(null, Constants.TITLE, t.getMessage());
 		}
 
 		children = list.toArray(new SchemaElement[list.size()]);
@@ -37,10 +37,12 @@ public class GeneratorRootElement implements Element {
 	}
 
 	@Override
-	public void addActionToContextMenu(IMenuManager manager) {}
+	public void addActionToContextMenu(IMenuManager manager) {
+	}
 
 	@Override
-	public void doubleClick() {}
+	public void doubleClick() {
+	}
 
 	@Override
 	public int getCategory() {

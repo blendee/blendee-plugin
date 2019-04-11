@@ -1,18 +1,15 @@
 package org.blendee.plugin.views.element;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.io.File;
 
+import org.blendee.assist.TableFacadePackageRule;
 import org.blendee.codegen.TableFacadeGenerator;
+import org.blendee.codegen.TableFacadeGeneratorHandler;
 import org.blendee.jdbc.BlendeeManager;
-import org.blendee.jdbc.ContextManager;
 import org.blendee.jdbc.TablePath;
 import org.blendee.plugin.BlendeePlugin;
 import org.blendee.plugin.Constants;
 import org.blendee.plugin.PluginTableFacadeGenerator;
-import org.blendee.sql.Relationship;
-import org.blendee.sql.RelationshipFactory;
-import org.blendee.assist.TableFacadePackageRule;
 import org.blendee.util.Blendee;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -127,42 +124,102 @@ public class TableElement extends PropertySourceElement {
 			plugin.useNumberClass(),
 			!plugin.notUseNullGuard());
 
-		RelationshipFactory factory = ContextManager.get(RelationshipFactory.class);
-		Relationship relation = factory.getInstance(path);
-		LinkedList<TablePath> tables = new LinkedList<>();
-		//自身をセット
-		tables.add(relation.getTablePath());
-
 		CodeFormatter formatter = ToolFactory.createCodeFormatter(
 			BlendeePlugin.getDefault().getProject().getOptions(true));
 
-		while (tables.size() > 0) {
-			TablePath targetPath = tables.pop();
-			Relationship target = factory.getInstance(targetPath);
+		PluginTableFacadeGeneratorHandler handler = new PluginTableFacadeGeneratorHandler(packageName, fragmentRoot, formatter);
 
-			IPackageFragment schemaPackage = getPackage(fragmentRoot, packageName + "." + TableFacadePackageRule.care(targetPath.getSchemaName()));
+		//自身をセット
+		handler.add(path);
 
-			build(generator, schemaPackage, target, formatter);
+		handler.execute(generator);
+	}
 
-			collect(tables, target);
+	private class PluginTableFacadeGeneratorHandler extends TableFacadeGeneratorHandler {
 
-			//大量のテーブルを一度に実行したときのための節約クリア
-			//Metadataはキャッシュを使用しているので、同じテーブルを処理してもDBから再取得はしない
-			factory.clearCache();
+		private final String packageName;
+
+		private final IPackageFragmentRoot fragmentRoot;
+
+		private final CodeFormatter formatter;
+
+		private TablePath current;
+
+		private IPackageFragment schemaPackage;
+
+		private ICompilationUnit currentUnit;
+
+		private PluginTableFacadeGeneratorHandler(
+			String packageName,
+			IPackageFragmentRoot fragmentRoot,
+			CodeFormatter formatter) {
+			this.packageName = packageName;
+			this.fragmentRoot = fragmentRoot;
+			this.formatter = formatter;
 		}
 
-		generator.writeDatabaseInfo(fragmentRoot.getResource().getLocation().toFile());
+		@Override
+		protected boolean exists(TablePath path) {
+			return isAvailable(path);
+		}
+
+		@Override
+		protected void start(TablePath path) {
+			current = path;
+			schemaPackage = getPackage(fragmentRoot, packageName + "." + TableFacadePackageRule.care(path.getSchemaName()));
+			currentUnit = schemaPackage.getCompilationUnit(TableFacadeGenerator.createCompilationUnitName(path.getTableName()));
+		}
+
+		@Override
+		protected boolean exists() {
+			return currentUnit.exists();
+		}
+
+		@Override
+		protected void infoSkip() {
+		}
+
+		@Override
+		protected String format(String source) {
+			return TableElement.format(formatter, source);
+		}
+
+		@Override
+		protected String loadSource() {
+			try {
+				return currentUnit.getSource();
+			} catch (JavaModelException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+
+		@Override
+		protected void writeSource(String source) {
+			try {
+				schemaPackage.createCompilationUnit(currentUnit.getElementName(), source, true, null);
+			} catch (JavaModelException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+
+		@Override
+		protected void end() {
+			parent.refresh(current);
+			Thread.yield();
+
+			current = null;
+			schemaPackage = null;
+			currentUnit = null;
+		}
+
+		@Override
+		protected File getOutputRoot() {
+			return fragmentRoot.getResource().getLocation().toFile();
+		}
 	}
 
 	boolean isAvailable() {
 		return isAvailable(path);
-	}
-
-	private void collect(List<TablePath> tables, Relationship relation) {
-		for (Relationship child : relation.getRelationships()) {
-			TablePath childPath = child.getTablePath();
-			if (!isAvailable(childPath)) tables.add(childPath);
-		}
 	}
 
 	private IPackageFragmentRoot findPackageRoot(IPackageFragment fragment) {
@@ -200,26 +257,6 @@ public class TableElement extends PropertySourceElement {
 		}
 	}
 
-	private void build(
-		TableFacadeGenerator generator,
-		IPackageFragment packageFragment,
-		Relationship relation,
-		CodeFormatter formatter) {
-		TablePath path = relation.getTablePath();
-		String tableName = path.getTableName();
-		try {
-			createSource(
-				TableFacadeGenerator.createCompilationUnitName(tableName),
-				packageFragment,
-				format(formatter, generator.build(relation)));
-		} catch (JavaModelException e) {
-			throw new IllegalStateException(e);
-		}
-
-		parent.refresh(path);
-		Thread.yield();
-	}
-
 	private static String format(CodeFormatter formatter, String source) {
 		Document document = new Document(source);
 		try {
@@ -234,14 +271,6 @@ public class TableElement extends PropertySourceElement {
 			throw new IllegalStateException(e);
 		}
 		return document.get();
-	}
-
-	private static void createSource(String compilationUnitName, IPackageFragment fragment, String source)
-		throws JavaModelException {
-		ICompilationUnit compilationUnit = fragment.getCompilationUnit(compilationUnitName);
-		if (compilationUnit.exists() && source.equals(compilationUnit.getSource())) return;
-
-		fragment.createCompilationUnit(compilationUnitName, source, true, null);
 	}
 
 	private static class TableAction extends Action {
