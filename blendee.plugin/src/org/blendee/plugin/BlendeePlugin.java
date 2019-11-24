@@ -155,11 +155,11 @@ public class BlendeePlugin extends AbstractUIPlugin {
 		if (project.isOpen() && project.hasNature(JavaCore.NATURE_ID)) {
 			try {
 				setProject((IJavaProject) project.getNature(JavaCore.NATURE_ID));
-			} catch (Exception e) {
-				e = strip(e);
-				e.printStackTrace();
+			} catch (Throwable t) {
+				t = strip(t);
+				t.printStackTrace();
 				currentProject = null;
-				MessageDialog.openError(null, Constants.TITLE, cause(e).getMessage());
+				MessageDialog.openError(null, Constants.TITLE, cause(t).getMessage());
 			}
 		}
 	}
