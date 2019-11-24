@@ -1,7 +1,7 @@
 package org.blendee.plugin;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.jface.resource.ResourceLocator;
 
 public class Constants {
 
@@ -37,37 +37,7 @@ public class Constants {
 
 	public static final ImageDescriptor COLLAPSE_ALL_ICON;
 
-	public static final ImageDescriptor DERETE_ALL_EDIT_ICON;
-
-	public static final ImageDescriptor SAVE_ICON;
-
 	public static final ImageDescriptor REFESH_ICON;
-
-	public static final ImageDescriptor UNDO_ICON;
-
-	public static final ImageDescriptor REDO_ICON;
-
-	public static final ImageDescriptor REMOVE_ICON;
-
-	public static final ImageDescriptor PACKAGE_ICON;
-
-	public static final ImageDescriptor CLASS_ICON;
-
-	public static final ImageDescriptor ANCHOR_ICON;
-
-	public static final ImageDescriptor ERROR_ICON;
-
-	public static final ImageDescriptor RELATIONSHIP_ICON;
-
-	public static final ImageDescriptor COLUMN_ICON;
-
-	public static final ImageDescriptor COLUMN_DISABLE_ICON;
-
-	public static final ImageDescriptor UNMARK_COLUMN_ICON;
-
-	public static final ImageDescriptor PRIMARY_KEY_ICON;
-
-	public static final ImageDescriptor FOREIGN_KEY_ICON;
 
 	public static final ImageDescriptor SCHEMA_ICON;
 
@@ -78,46 +48,16 @@ public class Constants {
 	private static final String ID = "org.blendee.plugin";
 
 	static {
-		BLENDEE_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/blendee.png");
+		BLENDEE_ICON = ResourceLocator.imageDescriptorFromBundle(ID, "icons/blendee.png").get();
 
-		COLLAPSE_ALL_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/collapse_all.gif");
+		COLLAPSE_ALL_ICON = ResourceLocator.imageDescriptorFromBundle(ID, "icons/collapse_all.gif").get();
 
-		DERETE_ALL_EDIT_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/delete_all_edit.gif");
+		REFESH_ICON = ResourceLocator.imageDescriptorFromBundle(ID, "icons/refresh.gif").get();
 
-		SAVE_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/save.gif");
+		SCHEMA_ICON = ResourceLocator.imageDescriptorFromBundle(ID, "icons/schema.gif").get();
 
-		REFESH_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/refresh.gif");
+		TABLE_ICON = ResourceLocator.imageDescriptorFromBundle(ID, "icons/table.png").get();
 
-		UNDO_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/undo.gif");
-
-		REDO_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/redo.gif");
-
-		REMOVE_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/remove.gif");
-
-		PACKAGE_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/package.gif");
-
-		CLASS_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/class.gif");
-
-		ANCHOR_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/anchor.gif");
-
-		ERROR_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/error.gif");
-
-		RELATIONSHIP_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/relationship.png");
-
-		COLUMN_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/column.png");
-
-		COLUMN_DISABLE_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/column_disable.png");
-
-		UNMARK_COLUMN_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/unmark_column.png");
-
-		PRIMARY_KEY_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/primary_key.png");
-
-		FOREIGN_KEY_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/foreign_key.png");
-
-		SCHEMA_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/schema.gif");
-
-		TABLE_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/table.png");
-
-		UNBUILT_TABLE_ICON = AbstractUIPlugin.imageDescriptorFromPlugin(ID, "icons/unbuilt_table.png");
+		UNBUILT_TABLE_ICON = ResourceLocator.imageDescriptorFromBundle(ID, "icons/unbuilt_table.png").get();
 	}
 }
