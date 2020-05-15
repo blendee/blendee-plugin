@@ -20,8 +20,6 @@ public class BlendeeStarter {
 		JavaProjectClassLoader loader,
 		Map<OptionKey<?>, ?> initValues)
 		throws Exception {
-		PluginTableFacadeGenerator.setClassLoader(loader);
-
 		ContextManager.newStrategy();
 
 		//過去のキャッシュがあるかもしれないのでクリアしておく

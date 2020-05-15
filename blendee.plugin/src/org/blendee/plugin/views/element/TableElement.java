@@ -1,6 +1,6 @@
 package org.blendee.plugin.views.element;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import org.blendee.assist.TableFacadePackageRule;
 import org.blendee.codegen.TableFacadeGenerator;
@@ -213,8 +213,8 @@ public class TableElement extends PropertySourceElement {
 		}
 
 		@Override
-		protected File getOutputRoot() {
-			return fragmentRoot.getResource().getLocation().toFile();
+		protected Path getOutputRoot() {
+			return fragmentRoot.getResource().getLocation().toFile().toPath();
 		}
 	}
 
