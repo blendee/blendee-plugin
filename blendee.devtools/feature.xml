@@ -2,7 +2,7 @@
 <feature
       id="blendee.devtools"
       label="Blendee Development Tools"
-      version="0.8.8.qualifier"
+      version="0.8.9.qualifier"
       provider-name="blendee.org"
       plugin="org.blendee.plugin">
 
@@ -42,7 +42,7 @@ SOFTWARE.
          id="org.blendee.plugin"
          download-size="0"
          install-size="0"
-         version="0.8.8"
+         version="0.8.9"
          unpack="false"/>
 
 </feature>
