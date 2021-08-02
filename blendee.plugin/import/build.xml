@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="blendee.plugin" default="import">
 
-	<property name="blendee.src" value="../../../blendee/src" />
-	<property name="blendee.codegensrc" value="../../../blendee/codegensrc" />
+	<property name="blendee.src" value="../../../blendee/src/main/java" />
+	<property name="blendee.tools-src" value="../../../blendee-tools/src/main/java" />
+	<property name="blendee.resources" value="../../../blendee/src/main/resources" />
+	<property name="blendee.tools-resources" value="../../../blendee-tools/src/main/resources" />
 
 	<path id="develop.classpath">
 		<pathelement location="build" />
@@ -16,7 +18,9 @@
 		<antcall target="compile-for-plugin" />
 		<copy todir="build">
 			<fileset dir="${blendee.src}" includes="**/*.java" />
-			<fileset dir="${blendee.codegensrc}" includes="**/*.java" />
+			<fileset dir="${blendee.tools-src}" includes="**/*.java" />
+			<fileset dir="${blendee.resources}" excludes="**/.gitkeep" />
+			<fileset dir="${blendee.tools-resources}" excludes="**/.gitkeep" />
 		</copy>
 		<jar basedir="build" jarfile="../blendee.jar" />
 	</target>
@@ -31,7 +35,7 @@
 			<exclude name="**/package-info.java" />
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
-		<javac srcdir="${blendee.codegensrc}" destdir="build" debug="true" optimize="true" deprecation="true" release="8" encoding="UTF-8" includeantruntime="false">
+		<javac srcdir="${blendee.tools-src}" destdir="build" debug="true" optimize="true" deprecation="true" release="8" encoding="UTF-8" includeantruntime="false">
 			<include name="**/*.java" />
 			<exclude name="**/package-info.java" />
 			<compilerarg value="-Xlint:unchecked" />
