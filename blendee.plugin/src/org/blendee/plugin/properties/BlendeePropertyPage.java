@@ -68,10 +68,10 @@ public class BlendeePropertyPage
 
 	@Override
 	public void createFieldEditors() {
-		final StringFieldEditor[] packagesEditorContainer = { null };
+		StringFieldEditor[] packagesEditorContainer = { null };
 
 		/*---------------------------------------------------*/
-		final StringFieldEditor schemaNamesEditor = new StringFieldEditor(
+		var schemaNamesEditor = new StringFieldEditor(
 			Constants.SCHEMA_NAMES,
 			//スキーマ名 (スペースで区切って複数入力可)
 			"Schema Names (separated by spaces)",
@@ -82,7 +82,7 @@ public class BlendeePropertyPage
 		addField(schemaNamesEditor);
 
 		/*---------------------------------------------------*/
-		StringFieldEditor packagesEditor = new StringFieldEditor(
+		var packagesEditor = new StringFieldEditor(
 			Constants.OUTPUT_PACKAGE_NAME,
 			//生成する TableFacade の出力パッケージ名
 			"Output Package Name (for generated class)",
@@ -95,7 +95,7 @@ public class BlendeePropertyPage
 		addField(packagesEditor);
 
 		/*---------------------------------------------------*/
-		StringFieldEditor jdbcURLEditor = new StringFieldEditor(
+		var jdbcURLEditor = new StringFieldEditor(
 			Constants.JDBC_URL,
 			"JDBC URL",
 			getFieldEditorParent());
@@ -105,7 +105,7 @@ public class BlendeePropertyPage
 		addField(jdbcURLEditor);
 
 		/*---------------------------------------------------*/
-		StringFieldEditor jdbcUserEditor = new StringFieldEditor(
+		var jdbcUserEditor = new StringFieldEditor(
 			Constants.JDBC_USER,
 			"JDBC User Name",
 			getFieldEditorParent());
@@ -115,7 +115,7 @@ public class BlendeePropertyPage
 		addField(jdbcUserEditor);
 
 		/*---------------------------------------------------*/
-		StringFieldEditor jdbcPasswordEditor = new StringFieldEditor(
+		var jdbcPasswordEditor = new StringFieldEditor(
 			Constants.JDBC_PASSWORD,
 			"JDBC Password",
 			getFieldEditorParent());
@@ -125,11 +125,11 @@ public class BlendeePropertyPage
 		addField(jdbcPasswordEditor);
 
 		/*---------------------------------------------------*/
-		Label label = new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL);
+		var label = new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL);
 		label.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 3, 1));
 
 		/*---------------------------------------------------*/
-		ClassFieldEditor transactionFactoryClassEditor = new ClassFieldEditor(
+		var transactionFactoryClassEditor = new ClassFieldEditor(
 			Constants.TRANSACTION_FACTORY_CLASS,
 			"Implementation of TransactionFactory",
 			element.getProject(),
@@ -159,7 +159,7 @@ public class BlendeePropertyPage
 		addField(transactionFactoryClassEditor);
 
 		/*---------------------------------------------------*/
-		ClassFieldEditor metadataFactoryClassEditor = new ClassFieldEditor(
+		var metadataFactoryClassEditor = new ClassFieldEditor(
 			Constants.METADATA_FACTORY_CLASS,
 			"Implementation of MetadataFactory",
 			element.getProject(),
@@ -189,7 +189,7 @@ public class BlendeePropertyPage
 		addField(metadataFactoryClassEditor);
 
 		/*---------------------------------------------------*/
-		ClassFieldEditor managerParentClassEditor = new ClassFieldEditor(
+		var managerParentClassEditor = new ClassFieldEditor(
 			Constants.TABLE_FACADE_PARENT_CLASS,
 			//自動生成 TableFacade の親クラス
 			"Superlass of TableFacade",
@@ -214,7 +214,7 @@ public class BlendeePropertyPage
 		addField(managerParentClassEditor);
 
 		/*---------------------------------------------------*/
-		ClassFieldEditor rowParentClassEditor = new ClassFieldEditor(
+		var rowParentClassEditor = new ClassFieldEditor(
 			Constants.ROW_PARENT_CLASS,
 			//自動生成 Row の親クラス
 			"Superclass of Row",
@@ -239,7 +239,7 @@ public class BlendeePropertyPage
 		addField(rowParentClassEditor);
 
 		/*---------------------------------------------------*/
-		ClassFieldEditor codeFormatterClassEditor = new ClassFieldEditor(
+		var codeFormatterClassEditor = new ClassFieldEditor(
 			Constants.CODE_FORMATTER_CLASS,
 			"Implementation of CodeFormatter",
 			element.getProject(),
@@ -269,7 +269,7 @@ public class BlendeePropertyPage
 		addField(codeFormatterClassEditor);
 
 		/*---------------------------------------------------*/
-		ClassFieldEditor jdbcDriverClassEditor = new ClassFieldEditor(
+		var jdbcDriverClassEditor = new ClassFieldEditor(
 			Constants.JDBC_DRIVER_CLASS,
 			"JDBC Driver",
 			element.getProject(),
@@ -299,7 +299,7 @@ public class BlendeePropertyPage
 		addField(jdbcDriverClassEditor);
 
 		/*---------------------------------------------------*/
-		BooleanFieldEditor useNumberClassEditor = new BooleanFieldEditor(
+		var useNumberClassEditor = new BooleanFieldEditor(
 			Constants.USE_NUMBER_CLASS,
 			//Row の数値項目を Number に統一
 			"Unify numeric properties of Row into Number",
@@ -308,7 +308,7 @@ public class BlendeePropertyPage
 		addField(useNumberClassEditor);
 
 		/*---------------------------------------------------*/
-		BooleanFieldEditor notUseNullGuardEditor = new BooleanFieldEditor(
+		var notUseNullGuardEditor = new BooleanFieldEditor(
 			Constants.NOT_USE_NULL_GUARD,
 			//Row の項目で null 保護機能を使用しない
 			"Do not use null protection on Row properties",
@@ -319,12 +319,12 @@ public class BlendeePropertyPage
 
 	@Override
 	public boolean performOk() {
-		boolean ok = super.performOk();
-		IPreferenceStore store = getPreferenceStore();
+		var ok = super.performOk();
+		var store = getPreferenceStore();
 
-		boolean changed = false;
+		var changed = false;
 
-		Properties properties = BlendeePlugin.getPersistentProperties(element);
+		var properties = BlendeePlugin.getPersistentProperties(element);
 
 		changed |= checkAndSetValue(store, properties, Constants.SCHEMA_NAMES);
 
@@ -375,8 +375,8 @@ public class BlendeePropertyPage
 		IPreferenceStore store,
 		Properties properties,
 		String key) {
-		String oldValue = properties.getProperty(key);
-		String newValue = store.getString(key);
+		var oldValue = properties.getProperty(key);
+		var newValue = store.getString(key);
 		if (newValue.equals(oldValue)) return false;
 		properties.setProperty(key, newValue);
 		return true;
@@ -384,7 +384,7 @@ public class BlendeePropertyPage
 
 	private IType findType(String typeName) {
 		try {
-			IType type = element.findType(typeName);
+			var type = element.findType(typeName);
 			if (type == null
 				|| type.isInterface()) return null;
 
@@ -395,7 +395,7 @@ public class BlendeePropertyPage
 	}
 
 	private void initializeDefaults() {
-		IPreferenceStore store = getPreferenceStore();
+		var store = getPreferenceStore();
 
 		store.setDefault(
 			Constants.SCHEMA_NAMES,
@@ -451,9 +451,9 @@ public class BlendeePropertyPage
 	}
 
 	private PreferenceStore createPreferenceStore() {
-		Properties properties = BlendeePlugin.getPersistentProperties(element);
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		PreferenceStore store = new PreferenceStore() {
+		var properties = BlendeePlugin.getPersistentProperties(element);
+		var out = new ByteArrayOutputStream();
+		var store = new PreferenceStore() {
 
 			@Override
 			public void save() {

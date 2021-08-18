@@ -6,15 +6,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.blendee.assist.Query;
@@ -25,7 +20,6 @@ import org.blendee.jdbc.OptionKey;
 import org.blendee.jdbc.TransactionFactory;
 import org.blendee.plugin.views.ClassBuilderView;
 import org.blendee.util.BlendeeConstants;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -34,7 +28,6 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IField;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
@@ -91,7 +84,7 @@ public class BlendeePlugin extends AbstractUIPlugin {
 		}
 
 		try {
-			IType target = project.findType(className);
+			var target = project.findType(className);
 			if (target == null) {
 				//存在するクラスを指定する必要があります
 				throw new JavaProjectException("Specify an existing class.");
@@ -114,16 +107,17 @@ public class BlendeePlugin extends AbstractUIPlugin {
 
 			String superclass;
 			while (true) {
-				String[] types = target.getSuperInterfaceNames();
-				for (String type : types) {
-					IType[] resolved = resolveType(project, target, type);
-					for (IType itype : resolved)
+				var types = target.getSuperInterfaceNames();
+				for (var type : types) {
+					var resolved = resolveType(project, target, type);
+					for (var itype : resolved)
 						if (factoryType.equals(itype)) return;
 				}
+
 				superclass = target.getSuperclassName();
 				if (superclass == null) break;
 
-				IType[] resolved = resolveType(project, target, superclass);
+				var resolved = resolveType(project, target, superclass);
 				if (resolved.length == 0)
 					//target.getFullyQualifiedName() + " が見つかりません"
 					throw new JavaProjectException(target.getFullyQualifiedName() + " not found");
@@ -149,9 +143,9 @@ public class BlendeePlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 
-		String projectName = InstanceScope.INSTANCE.getNode(pluginId).get(currentProjectKeyName, null);
+		var projectName = InstanceScope.INSTANCE.getNode(pluginId).get(currentProjectKeyName, null);
 		if (projectName == null || projectName.equals("")) return;
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+		var project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		if (project.isOpen() && project.hasNature(JavaCore.NATURE_ID)) {
 			try {
 				setProject((IJavaProject) project.getNature(JavaCore.NATURE_ID));
@@ -217,7 +211,7 @@ public class BlendeePlugin extends AbstractUIPlugin {
 		Properties properties)
 		throws JavaProjectException {
 		currentProject = project;
-		try (OutputStream output = new BufferedOutputStream(
+		try (var output = new BufferedOutputStream(
 			new FileOutputStream(getPropertiesFile(project)))) {
 			properties.store(output, "");
 		} catch (IOException e) {
@@ -242,9 +236,9 @@ public class BlendeePlugin extends AbstractUIPlugin {
 	}
 
 	public static Properties getPersistentProperties(IJavaProject project) {
-		Properties properties = new Properties();
+		var properties = new Properties();
 		try {
-			InputStream input = new BufferedInputStream(
+			var input = new BufferedInputStream(
 				new FileInputStream(getPropertiesFile(project)));
 			try {
 				properties.load(input);
@@ -273,7 +267,7 @@ public class BlendeePlugin extends AbstractUIPlugin {
 
 	public static String load(IJavaProject project, String key) {
 		try {
-			String value = project.getProject().getPersistentProperty(new QualifiedName("", key));
+			var value = project.getProject().getPersistentProperty(new QualifiedName("", key));
 			return value == null ? "" : value;
 		} catch (CoreException e) {
 			return "";
@@ -309,10 +303,10 @@ public class BlendeePlugin extends AbstractUIPlugin {
 	}
 
 	public static String[] splitByBlankAndRemoveEmptyString(String target) {
-		String regex = " +";
-		String[] values = (target == null ? "" : target).split(regex);
-		List<String> list = new LinkedList<>();
-		for (String value : values) {
+		var regex = " +";
+		var values = (target == null ? "" : target).split(regex);
+		var list = new LinkedList<String>();
+		for (var value : values) {
 			if (U.presents(value)) list.add(value);
 		}
 
@@ -320,15 +314,15 @@ public class BlendeePlugin extends AbstractUIPlugin {
 	}
 
 	public void refresh() throws JavaProjectException {
-		Map<OptionKey<?>, Object> init = new HashMap<>();
+		var init = new HashMap<OptionKey<?>, Object>();
 
-		Properties properties = getPersistentProperties(currentProject);
+		var properties = getPersistentProperties(currentProject);
 
 		outputPackage = properties.getProperty(Constants.OUTPUT_PACKAGE_NAME);
 
 		init.put(BlendeeConstants.TABLE_FACADE_PACKAGE, outputPackage.trim());
 
-		String[] schemaNameArray = splitByBlankAndRemoveEmptyString(
+		var schemaNameArray = splitByBlankAndRemoveEmptyString(
 			properties.getProperty(Constants.SCHEMA_NAMES));
 
 		setSchemaNames(schemaNameArray);
@@ -344,12 +338,12 @@ public class BlendeePlugin extends AbstractUIPlugin {
 			throw new JavaProjectException(e);
 		}
 
-		String jdbcDriverClass = properties.getProperty(Constants.JDBC_DRIVER_CLASS);
+		var jdbcDriverClass = properties.getProperty(Constants.JDBC_DRIVER_CLASS);
 		if (U.presents(jdbcDriverClass)) {
 			init.put(BlendeeConstants.JDBC_DRIVER_CLASS_NAME, jdbcDriverClass);
 		}
 
-		String jdbcURL = BlendeePlugin.load(currentProject, Constants.JDBC_URL);
+		var jdbcURL = BlendeePlugin.load(currentProject, Constants.JDBC_URL);
 		if (U.presents(jdbcURL)) {
 			init.put(BlendeeConstants.JDBC_URL, jdbcURL);
 			init.put(BlendeeConstants.JDBC_USER, BlendeePlugin.load(currentProject, Constants.JDBC_USER));
@@ -358,7 +352,7 @@ public class BlendeePlugin extends AbstractUIPlugin {
 
 		try {
 			{
-				String classString = properties.getProperty(Constants.TRANSACTION_FACTORY_CLASS);
+				var classString = properties.getProperty(Constants.TRANSACTION_FACTORY_CLASS);
 				if (U.presents(classString)) {
 					init.put(BlendeeConstants.TRANSACTION_FACTORY_CLASS, Class.forName(classString, false, loader));
 				} else {
@@ -368,7 +362,7 @@ public class BlendeePlugin extends AbstractUIPlugin {
 			}
 
 			{
-				String classString = properties.getProperty(Constants.METADATA_FACTORY_CLASS);
+				var classString = properties.getProperty(Constants.METADATA_FACTORY_CLASS);
 				if (U.presents(classString)) {
 					init.put(BlendeeConstants.METADATA_FACTORY_CLASS, Class.forName(classString, false, loader));
 				} else {
@@ -385,23 +379,23 @@ public class BlendeePlugin extends AbstractUIPlugin {
 		try {
 			BlendeeStarter.start(loader, init);
 
-			String tableFacadeParentClassName = properties.getProperty(Constants.TABLE_FACADE_PARENT_CLASS);
+			var tableFacadeParentClassName = properties.getProperty(Constants.TABLE_FACADE_PARENT_CLASS);
 			if (U.presents(tableFacadeParentClassName)) {
 				tableFacadeParentClass = Class.forName(tableFacadeParentClassName, false, loader);
 			} else {
 				tableFacadeParentClass = null;
 			}
 
-			String rowParentClassName = properties.getProperty(Constants.ROW_PARENT_CLASS);
+			var rowParentClassName = properties.getProperty(Constants.ROW_PARENT_CLASS);
 			if (U.presents(rowParentClassName)) {
 				rowParentClass = Class.forName(rowParentClassName, false, loader);
 			} else {
 				rowParentClass = null;
 			}
 
-			String codeFormatterClassName = properties.getProperty(Constants.CODE_FORMATTER_CLASS);
+			var codeFormatterClassName = properties.getProperty(Constants.CODE_FORMATTER_CLASS);
 			if (U.presents(codeFormatterClassName)) {
-				ClassLoader pluginLoader = new JavaProjectClassLoader(
+				var pluginLoader = new JavaProjectClassLoader(
 					getClass().getClassLoader(),
 					currentProject);
 				codeFormatter = (CodeFormatter) Class.forName(codeFormatterClassName, false, pluginLoader).getDeclaredConstructor().newInstance();
@@ -409,14 +403,14 @@ public class BlendeePlugin extends AbstractUIPlugin {
 				codeFormatter = null;
 			}
 
-			String useNumberClassString = properties.getProperty(Constants.USE_NUMBER_CLASS);
+			var useNumberClassString = properties.getProperty(Constants.USE_NUMBER_CLASS);
 			if (U.presents(useNumberClassString)) {
 				useNumberClass = Boolean.parseBoolean(useNumberClassString);
 			} else {
 				useNumberClass = false;
 			}
 
-			String notUseNullGuardString = properties.getProperty(Constants.NOT_USE_NULL_GUARD);
+			var notUseNullGuardString = properties.getProperty(Constants.NOT_USE_NULL_GUARD);
 			if (U.presents(notUseNullGuardString)) {
 				notUseNullGuard = Boolean.parseBoolean(notUseNullGuardString);
 			} else {
@@ -428,9 +422,9 @@ public class BlendeePlugin extends AbstractUIPlugin {
 	}
 
 	public static IPackageFragment findPackage(String packageName) {
-		String packagePath = packageName.replace('.', '/');
+		var packagePath = packageName.replace('.', '/');
 		try {
-			IJavaElement element = BlendeePlugin.getDefault().getProject().findElement(new Path(packagePath));
+			var element = BlendeePlugin.getDefault().getProject().findElement(new Path(packagePath));
 			if (element instanceof IPackageFragment) return (IPackageFragment) element;
 		} catch (JavaModelException e) {
 			throw new IllegalStateException(e);
@@ -440,11 +434,11 @@ public class BlendeePlugin extends AbstractUIPlugin {
 	}
 
 	public static void refreshOutputPackage() {
-		BlendeePlugin plugin = BlendeePlugin.getDefault();
+		var plugin = BlendeePlugin.getDefault();
 
-		String packageName = plugin.getOutputPackage();
+		var packageName = plugin.getOutputPackage();
 
-		IPackageFragment baseFragment = findPackage(packageName);
+		var baseFragment = findPackage(packageName);
 
 		try {
 			baseFragment.getResource().refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -454,14 +448,14 @@ public class BlendeePlugin extends AbstractUIPlugin {
 	}
 
 	private static Throwable cause(Throwable t) {
-		Throwable cause = t.getCause();
+		var cause = t.getCause();
 		if (cause == null) return t;
 		return cause(cause);
 	}
 
 	private static void checkProject(IJavaProject project) throws JavaProjectException {
 		if (project == null) return;
-		Properties properties = getPersistentProperties(project);
+		var properties = getPersistentProperties(project);
 		checkRequiredClass(
 			false,
 			project,
@@ -475,16 +469,16 @@ public class BlendeePlugin extends AbstractUIPlugin {
 	}
 
 	public static IType findFiledType(IField field) throws JavaModelException {
-		Matcher matcher = typeSignaturePattern.matcher(field.getTypeSignature());
+		var matcher = typeSignaturePattern.matcher(field.getTypeSignature());
 		matcher.matches();
-		String[][] resolved = field.getDeclaringType().resolveType(matcher.group(1));
+		var resolved = field.getDeclaringType().resolveType(matcher.group(1));
 
 		return field.getJavaProject().findType(resolved[0][0], resolved[0][1]);
 	}
 
 	public static boolean checkQueryClass(IType type) throws JavaModelException {
-		String[] interfaces = type.getSuperInterfaceNames();
-		for (String name : interfaces) {
+		var interfaces = type.getSuperInterfaceNames();
+		for (var name : interfaces) {
 			if (queryClassPattern.matcher(name).matches()) return true;
 		}
 
@@ -493,22 +487,19 @@ public class BlendeePlugin extends AbstractUIPlugin {
 
 	@SuppressWarnings("unchecked")
 	public static <T extends Throwable> T strip(Throwable t) {
-		Throwable cause = t.getCause();
+		var cause = t.getCause();
 		if (cause == null) return (T) t;
 
 		return strip(cause);
 	}
 
 	private static File getPropertiesFile(IJavaProject project) throws IOException {
-		File file = new File(project.getProject().getLocation().toFile(), ".blendee.plugin");
+		var file = new File(project.getProject().getLocation().toFile(), ".blendee.plugin");
 		if (!file.exists()) {
 			file.createNewFile();
 
-			OutputStream output = new BufferedOutputStream(new FileOutputStream(file));
-			try {
+			try (var output = new BufferedOutputStream(new FileOutputStream(file))) {
 				new Properties().store(output, "");
-			} finally {
-				output.close();
 			}
 		}
 
@@ -524,10 +515,10 @@ public class BlendeePlugin extends AbstractUIPlugin {
 			return new IType[] { project.findType(className) };
 		}
 
-		String[][] resolved = base.resolveType(className);
+		var resolved = base.resolveType(className);
 		if (resolved == null) return new IType[0];
-		List<IType> types = new LinkedList<>();
-		for (String[] element : resolved)
+		var types = new LinkedList<IType>();
+		for (var element : resolved)
 			types.add(project.findType(String.join(".", element)));
 
 		return types.toArray(new IType[types.size()]);

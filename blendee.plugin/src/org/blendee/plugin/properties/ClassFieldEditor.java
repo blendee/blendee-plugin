@@ -5,7 +5,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
@@ -13,7 +12,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.StringButtonFieldEditor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
 class ClassFieldEditor extends StringButtonFieldEditor {
@@ -34,11 +32,11 @@ class ClassFieldEditor extends StringButtonFieldEditor {
 
 	@Override
 	protected String changePressed() {
-		String fqcn = getTextControl().getText();
-		IJavaSearchScope scope = SearchEngine.createJavaSearchScope(
+		var fqcn = getTextControl().getText();
+		var scope = SearchEngine.createJavaSearchScope(
 			new IJavaProject[] { JavaCore.create(project) });
 		SelectionDialog dialog;
-		Shell shell = getShell();
+		var shell = getShell();
 		try {
 			dialog = JavaUI.createTypeDialog(
 				shell,
@@ -50,8 +48,9 @@ class ClassFieldEditor extends StringButtonFieldEditor {
 		} catch (JavaModelException e) {
 			throw new RuntimeException(e);
 		}
+
 		dialog.open();
-		Object[] results = dialog.getResult();
+		var results = dialog.getResult();
 		if (results == null) return null;
 		return ((IType) results[0]).getFullyQualifiedName('.');
 	}

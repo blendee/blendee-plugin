@@ -45,7 +45,7 @@ public class PluginAnnotationMetadataFactory extends AnnotationMetadataFactory {
 	}
 
 	private static boolean hasTarget(Class<?>[] interfaces) {
-		for (Class<?> clazz : interfaces) {
+		for (var clazz : interfaces) {
 			if (clazz.getName().equals(tableClassName)) return true;
 		}
 

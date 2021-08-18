@@ -30,12 +30,12 @@
 	-->
 	<target name="compile-for-plugin">
 		<mkdir dir="build" />
-		<javac srcdir="${blendee.src}" destdir="build" debug="true" optimize="true" deprecation="true" release="8" encoding="UTF-8" includeantruntime="false">
+		<javac srcdir="${blendee.src}" destdir="build" debug="true" optimize="true" deprecation="true" release="11" encoding="UTF-8" includeantruntime="false">
 			<include name="**/*.java" />
 			<exclude name="**/package-info.java" />
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
-		<javac srcdir="${blendee.tools-src}" destdir="build" debug="true" optimize="true" deprecation="true" release="8" encoding="UTF-8" includeantruntime="false">
+		<javac srcdir="${blendee.tools-src}" destdir="build" debug="true" optimize="true" deprecation="true" release="11" encoding="UTF-8" includeantruntime="false">
 			<include name="**/*.java" />
 			<exclude name="**/package-info.java" />
 			<compilerarg value="-Xlint:unchecked" />

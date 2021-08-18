@@ -2,7 +2,6 @@ package org.blendee.plugin.views;
 
 import org.blendee.plugin.BlendeePlugin;
 import org.blendee.plugin.views.element.Element;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -13,20 +12,18 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 
 public abstract class AbstractView extends ViewPart {
 
 	String createProjectNamePart() {
-		IJavaProject project = BlendeePlugin.getDefault().getProject();
+		var project = BlendeePlugin.getDefault().getProject();
 		if (project != null) return "[" + project.getElementName() + "]";
 		return " ";
 	}
 
 	void showViewName() {
-		String projectPart = createProjectNamePart();
+		var projectPart = createProjectNamePart();
 		setContentDescription(projectPart);
 		getViewSite()
 			.getActionBars()
@@ -39,9 +36,9 @@ public abstract class AbstractView extends ViewPart {
 
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				Element element = (Element) ((IStructuredSelection) event.getSelection()).getFirstElement();
+				var element = (Element) ((IStructuredSelection) event.getSelection()).getFirstElement();
 				String message;
-				String projectPart = createProjectNamePart();
+				var projectPart = createProjectNamePart();
 				if (element != null) {
 					message = projectPart + " " + element.getPath();
 				} else {
@@ -58,7 +55,7 @@ public abstract class AbstractView extends ViewPart {
 	}
 
 	void hookContextMenu(TreeViewer viewer, final AbstractView self) {
-		MenuManager menuMgr = new MenuManager("#PopupMenu");
+		var menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 
@@ -68,7 +65,7 @@ public abstract class AbstractView extends ViewPart {
 			}
 		});
 
-		Menu menu = menuMgr.createContextMenu(viewer.getControl());
+		var menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
 	}
@@ -85,7 +82,7 @@ public abstract class AbstractView extends ViewPart {
 	}
 
 	void contributeToActionBars() {
-		IActionBars bars = getViewSite().getActionBars();
+		var bars = getViewSite().getActionBars();
 		fillLocalToolBar(bars.getToolBarManager());
 	}
 

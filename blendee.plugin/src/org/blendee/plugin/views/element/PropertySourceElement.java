@@ -3,7 +3,6 @@ package org.blendee.plugin.views.element;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.blendee.plugin.BlendeePlugin;
@@ -52,7 +51,7 @@ abstract class PropertySourceElement implements Element, IPropertySource {
 		values.put(nameId, getName());
 		values.put(pathId, getPath());
 		values.put(typeId, getType());
-		List<IPropertyDescriptor> list = new ArrayList<>();
+		var list = new ArrayList<IPropertyDescriptor>();
 		list.add(projectPropertyDescriptor);
 		list.add(namePropertyDescriptor);
 		list.add(pathPropertyDescriptor);
@@ -63,7 +62,7 @@ abstract class PropertySourceElement implements Element, IPropertySource {
 
 	@Override
 	public Object getPropertyValue(Object id) {
-		String value = values.get(id);
+		var value = values.get(id);
 		if (value == null) return getMyPropertyValue(id);
 		return value;
 	}
@@ -74,10 +73,12 @@ abstract class PropertySourceElement implements Element, IPropertySource {
 	}
 
 	@Override
-	public void resetPropertyValue(Object id) {}
+	public void resetPropertyValue(Object id) {
+	}
 
 	@Override
-	public void setPropertyValue(Object id, Object value) {}
+	public void setPropertyValue(Object id, Object value) {
+	}
 
 	abstract String getType();
 

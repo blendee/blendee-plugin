@@ -1,6 +1,5 @@
 package org.blendee.plugin;
 
-import java.net.URL;
 import java.sql.Connection;
 
 import org.blendee.util.DriverManagerTransactionFactory;
@@ -14,7 +13,7 @@ public class PluginDriverTransactionFactory extends DriverManagerTransactionFact
 	public PluginDriverTransactionFactory() throws Exception {
 		if (proxyClass != null) return;
 
-		URL url = PluginDriverTransactionFactory.class
+		var url = PluginDriverTransactionFactory.class
 			.getResource("ProxyDriverManager.class");
 		proxyClass = loader.defineClass(url);
 	}

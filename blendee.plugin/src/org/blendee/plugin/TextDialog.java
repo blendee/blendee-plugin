@@ -37,6 +37,7 @@ public class TextDialog extends Dialog {
 			IDialogConstants.OK_ID,
 			IDialogConstants.OK_LABEL,
 			true);
+
 		text.setFocus();
 		text.setText(value);
 		text.selectAll();
@@ -44,11 +45,11 @@ public class TextDialog extends Dialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite composite = (Composite) super.createDialogArea(parent);
+		var composite = (Composite) super.createDialogArea(parent);
 
-		Label label = new Label(composite, SWT.WRAP);
+		var label = new Label(composite, SWT.WRAP);
 		label.setText(message);
-		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
+		var data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		data.widthHint = convertHorizontalDLUsToPixels(
 			IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 		label.setLayoutData(data);

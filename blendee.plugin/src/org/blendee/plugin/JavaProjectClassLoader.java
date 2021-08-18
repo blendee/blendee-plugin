@@ -9,7 +9,6 @@ import java.net.URLClassLoader;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.blendee.internal.U;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -29,13 +28,13 @@ class JavaProjectClassLoader extends ClassLoader {
 		IJavaProject project)
 		throws JavaModelException {
 		super(parent);
-		List<ClassLoader> allList = new LinkedList<>();
-		List<ClassLoader> exportedList = new LinkedList<>();
-		ClassLoader defaultOutputClassLoader = createClassLoader(
+		var allList = new LinkedList<ClassLoader>();
+		var exportedList = new LinkedList<ClassLoader>();
+		var defaultOutputClassLoader = createClassLoader(
 			getAbsolutePath(project, project.getOutputLocation()));
-		IClasspathEntry[] entries = project.getResolvedClasspath(true);
-		for (IClasspathEntry entry : entries) {
-			ClassLoader loader = switchClassLoader(
+		var entries = project.getResolvedClasspath(true);
+		for (var entry : entries) {
+			var loader = switchClassLoader(
 				entry,
 				project,
 				defaultOutputClassLoader);
@@ -50,8 +49,8 @@ class JavaProjectClassLoader extends ClassLoader {
 	@Override
 	protected Class<?> findClass(String className)
 		throws ClassNotFoundException {
-		for (ClassLoader loader : loaders) {
-			URL url = loader.getResource(className.replace('.', '/') + ".class");
+		for (var loader : loaders) {
+			var url = loader.getResource(className.replace('.', '/') + ".class");
 			if (url == null) continue;
 			return defineClass(url);
 		}
@@ -74,9 +73,9 @@ class JavaProjectClassLoader extends ClassLoader {
 
 	@Override
 	public Enumeration<URL> getResources(String name) throws IOException {
-		List<URL> results = new LinkedList<>();
-		for (ClassLoader loader : loaders) {
-			Enumeration<URL> resources = loader.getResources(name);
+		var results = new LinkedList<URL>();
+		for (var loader : loaders) {
+			var resources = loader.getResources(name);
 			while (resources.hasMoreElements()) {
 				results.add(resources.nextElement());
 			}
@@ -100,7 +99,7 @@ class JavaProjectClassLoader extends ClassLoader {
 	public Class<?> defineClass(URL url) {
 		try (BufferedInputStream buffer = new BufferedInputStream(
 			url.openStream())) {
-			byte[] bytes = U.readBytes(buffer);
+			var bytes = U.readBytes(buffer);
 			return defineClass(null, bytes, 0, bytes.length);
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
@@ -120,7 +119,7 @@ class JavaProjectClassLoader extends ClassLoader {
 				getClass().getClassLoader(),
 				createProject(entry));
 		case IClasspathEntry.CPE_SOURCE:
-			IPath path = entry.getOutputLocation();
+			var path = entry.getOutputLocation();
 			if (path == null) {
 				return defaultOutputClassLoader;
 			}
@@ -133,7 +132,7 @@ class JavaProjectClassLoader extends ClassLoader {
 
 	private static IPath getAbsolutePath(IJavaProject project, IPath path)
 		throws JavaModelException {
-		IPath projectLocation = project.getProject().getLocation();
+		var projectLocation = project.getProject().getLocation();
 		//プロジェクト外のライブラリの場合
 		if (path.toFile().isAbsolute()) return path;
 

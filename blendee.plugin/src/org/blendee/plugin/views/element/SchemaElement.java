@@ -7,11 +7,9 @@ import org.blendee.jdbc.BlendeeManager;
 import org.blendee.jdbc.TablePath;
 import org.blendee.plugin.BlendeePlugin;
 import org.blendee.plugin.Constants;
-import org.blendee.plugin.views.ClassBuilderView;
 import org.blendee.util.Blendee;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.graphics.Image;
 
 public class SchemaElement extends PropertySourceElement {
@@ -29,9 +27,9 @@ public class SchemaElement extends PropertySourceElement {
 	SchemaElement(String name) {
 		this.name = name;
 
-		TablePath[] tables = BlendeeManager.get().getMetadata().getTables(name);
+		var tables = BlendeeManager.get().getMetadata().getTables(name);
 
-		for (TablePath table : tables) {
+		for (var table : tables) {
 			children.put(table, new TableElement(this, table));
 		}
 	}
@@ -73,7 +71,7 @@ public class SchemaElement extends PropertySourceElement {
 
 	@Override
 	public void doubleClick() {
-		TreeViewer viewer = BlendeePlugin.getDefault()
+		var viewer = BlendeePlugin.getDefault()
 			.getClassBuilderView()
 			.getTreeViewer();
 		viewer.setExpandedState(this, !viewer.getExpandedState(this));
@@ -93,12 +91,12 @@ public class SchemaElement extends PropertySourceElement {
 	}
 
 	void refresh(TablePath table) {
-		TableElement element = children.get(table);
+		var element = children.get(table);
 
 		if (element == null) return;
 
-		ClassBuilderView view = BlendeePlugin.getDefault().getClassBuilderView();
-		TreeViewer viewer = view.getTreeViewer();
+		var view = BlendeePlugin.getDefault().getClassBuilderView();
+		var viewer = view.getTreeViewer();
 		viewer.refresh(element);
 	}
 
@@ -108,7 +106,7 @@ public class SchemaElement extends PropertySourceElement {
 
 		private AllBuildAction() {
 			//すべてのテーブルに Blendee クラスを生成する
-			String text = "Genarate TableFacade classes on all tables";
+			var text = "Genarate TableFacade classes on all tables";
 			setText(text);
 			setToolTipText(text);
 			setImageDescriptor(Constants.SCHEMA_ICON);
@@ -137,7 +135,7 @@ public class SchemaElement extends PropertySourceElement {
 
 		private RebuildAction() {
 			//すべての Blendee クラスを再生成する
-			String text = "Regenerate all generated TableFacade classes";
+			var text = "Regenerate all generated TableFacade classes";
 			setText(text);
 			setToolTipText(text);
 			setImageDescriptor(Constants.SCHEMA_ICON);

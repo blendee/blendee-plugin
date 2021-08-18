@@ -104,18 +104,18 @@ public class TableElement extends PropertySourceElement {
 	}
 
 	void build() throws Exception {
-		BlendeePlugin plugin = BlendeePlugin.getDefault();
+		var plugin = BlendeePlugin.getDefault();
 
-		String packageName = plugin.getOutputPackage();
+		var packageName = plugin.getOutputPackage();
 
-		IPackageFragment baseFragment = BlendeePlugin.findPackage(packageName);
+		var baseFragment = BlendeePlugin.findPackage(packageName);
 		if (baseFragment == null)
 			//"パッケージ " + packageName + " が存在しません"
 			throw new IllegalStateException("Package " + packageName + " not found");
 
-		IPackageFragmentRoot fragmentRoot = findPackageRoot(baseFragment);
+		var fragmentRoot = findPackageRoot(baseFragment);
 
-		TableFacadeGenerator generator = new PluginTableFacadeGenerator(
+		var generator = new PluginTableFacadeGenerator(
 			BlendeeManager.get().getMetadata(),
 			baseFragment.getElementName(),
 			plugin.getTableFacadeParentClass(),
@@ -124,10 +124,10 @@ public class TableElement extends PropertySourceElement {
 			plugin.useNumberClass(),
 			!plugin.notUseNullGuard());
 
-		CodeFormatter formatter = ToolFactory.createCodeFormatter(
+		var formatter = ToolFactory.createCodeFormatter(
 			BlendeePlugin.getDefault().getProject().getOptions(true));
 
-		PluginTableFacadeGeneratorHandler handler = new PluginTableFacadeGeneratorHandler(packageName, fragmentRoot, formatter);
+		var handler = new PluginTableFacadeGeneratorHandler(packageName, fragmentRoot, formatter);
 
 		//自身をセット
 		handler.add(path);
@@ -232,7 +232,7 @@ public class TableElement extends PropertySourceElement {
 	}
 
 	private IPackageFragment getPackage(IPackageFragmentRoot fragmentRoot, String packageName) {
-		IPackageFragment fragment = BlendeePlugin.findPackage(packageName);
+		var fragment = BlendeePlugin.findPackage(packageName);
 		if (fragment != null) return fragment;
 
 		try {
@@ -243,7 +243,7 @@ public class TableElement extends PropertySourceElement {
 	}
 
 	private boolean isAvailable(TablePath path) {
-		String typeName = String.join(
+		var typeName = String.join(
 			".",
 			new String[] {
 				BlendeePlugin.getDefault().getOutputPackage(),
@@ -258,7 +258,7 @@ public class TableElement extends PropertySourceElement {
 	}
 
 	private static String format(CodeFormatter formatter, String source) {
-		Document document = new Document(source);
+		var document = new Document(source);
 		try {
 			formatter.format(
 				CodeFormatter.K_COMPILATION_UNIT,
@@ -279,7 +279,7 @@ public class TableElement extends PropertySourceElement {
 
 		private TableAction() {
 			//Table クラスを生成する
-			String text = "Generate TableFacade";
+			var text = "Generate TableFacade";
 			setText(text);
 			setToolTipText(text);
 			setImageDescriptor(Constants.TABLE_ICON);

@@ -163,7 +163,7 @@ public class ClassBuilderView extends AbstractView {
 
 	@Override
 	void fillContextMenu(IMenuManager manager) {
-		final Element element = getSelectedElement();
+		var element = getSelectedElement();
 		if (element == null) return;
 		element.addActionToContextMenu(manager);
 		drillDownAdapter.addNavigationActions(manager);
@@ -190,7 +190,7 @@ public class ClassBuilderView extends AbstractView {
 		};
 
 		//すべて縮小表示
-		String collapseAllActionText = "Collapse All";
+		var collapseAllActionText = "Collapse All";
 		collapseAllAction.setText(collapseAllActionText);
 		collapseAllAction.setToolTipText(collapseAllActionText);
 		collapseAllAction.setImageDescriptor(Constants.COLLAPSE_ALL_ICON);
@@ -215,7 +215,7 @@ public class ClassBuilderView extends AbstractView {
 		};
 
 		//再読込み
-		String refreshActionText = "Refresh";
+		var refreshActionText = "Refresh";
 		refreshAction.setText(refreshActionText);
 		refreshAction.setToolTipText(refreshActionText);
 		refreshAction.setImageDescriptor(Constants.REFESH_ICON);
